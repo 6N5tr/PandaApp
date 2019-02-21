@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+        tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+                android:id="@+id/nav_menu"
+                android:icon="@drawable/ic_chrome_reader_mode_black_24dp"
+                android:iconTint="@android:color/white"
+                android:title="Menu"/>
+        <item
+                android:id="@+id/nav_ventas"
+                android:icon="@drawable/ic_shopping_basket_black_24dp"
+                android:iconTint="@android:color/white"
+                android:title="Ventas"/>
+        <item
+                android:id="@+id/nav_productos"
+                android:icon="@drawable/ic_featured_play_list_black_24dp"
+                android:iconTint="@android:color/white"
+                android:title="Productos"/>
+        <item
+                android:id="@+id/nav_salir"
+                android:icon="@drawable/ic_exit_to_app_black_24dp"
+                android:iconTint="@android:color/white"
+                android:title="Salir"/>
+
+    </group>
+
+</menu>

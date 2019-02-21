@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#004d40</color>
-    <color name="colorPrimaryDark">#00251a</color>
-    <color name="colorAccent">#39796b</color>
+    <color name="colorPrimary">#c66136</color>
+    <color name="colorPrimaryDark">#3d3f4b</color>
+    <color name="colorAccent">#bdbdbd</color>
 
     <color name="btnRegistro">#39796b</color>
     <color name="btnIngreso">#A9d440</color>
@@ -11,6 +11,8 @@
     <color name="overlayActionBar">#0e0d0e</color>
 
     <color name="botonesinicio">#3d3f4b</color>
+
+    <color name="secondColor">#c66136</color>
 
 
 </resources>
