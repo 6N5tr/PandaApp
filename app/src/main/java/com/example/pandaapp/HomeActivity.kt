@@ -1,15 +1,18 @@
 package com.example.pandaapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.*
+import android.widget.GridLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -46,7 +49,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar)
         txtFullName.setText(Comun.currentUser)
         mRecyclerView=findViewById(R.id.recycler_menu)
-        mRecyclerView.layoutManager=LinearLayoutManager(this)
+        mRecyclerView.layoutManager=GridLayoutManager(this,3)
         //progressbar
         show_progress=findViewById(R.id.probar)
         //Recycler
@@ -68,8 +71,18 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
                     override fun onDataChange(p0: DataSnapshot) {
                         show_progress.visibility=if(itemCount==0) View.VISIBLE else View.GONE
-                        holder.mNombre.setText(model.Name)
+                        holder.mNombre.setText(" "+model.Name)
+                        holder.mPrecio.setText(model.Price.toString()+" ")
                         Picasso.get().load(model.Photo).into(holder.mImagen)
+
+
+                        holder.itemView.setOnClickListener{
+                            /*val intent= Intent(this@HomeActivity,InfoActivity::class.java)
+                            intent.putExtra("FirebaseImagen",model.Photo)
+                            intent.putExtra("FirebaseNombre",model.Name)
+                            startActivity(intent)*/
+                            Toast.makeText(this@HomeActivity,""+model.Name+" Precio: "+model.Price.toString(), Toast.LENGTH_SHORT).show()
+                        }
 
                     }
 

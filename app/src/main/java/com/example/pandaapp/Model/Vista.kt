@@ -3,17 +3,15 @@ package com.example.pandaapp.Model
 class Vista{
     var Name:String?=null
     var Photo:String?=null
+    var Price:Double?=null
 
-    constructor():this("",""){}
+    constructor():this("","",0.0){}
 
-
-    constructor(Nombre: String?, Imagen: String?) {
-        this.Photo = Imagen
-        this.Name = Nombre
+    constructor(Name: String?, Photo: String?, Price: Double?) {
+        this.Name = Name
+        this.Photo = Photo
+        this.Price = Price
     }
-
-
-
 
 
 }
