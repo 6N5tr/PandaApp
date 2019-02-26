@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
@@ -17,6 +18,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import com.example.pandaapp.Comun.Comun
+import com.example.pandaapp.Database.Database
+import com.example.pandaapp.Model.DetallePedidos
 import com.example.pandaapp.Model.Vista
 import com.example.pandaapp.ViewHolder.MenuViewHolder
 import com.firebase.ui.database.FirebaseRecyclerAdapter
@@ -28,11 +31,13 @@ import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_home.*
+import kotlinx.android.synthetic.main.cantidad_dialog.view.*
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     var database = FirebaseDatabase.getInstance()
     var ref = database.getReference("Views")
+
     lateinit var mRecyclerView:RecyclerView
 
     lateinit var show_progress:ProgressBar
@@ -65,6 +70,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             override fun onBindViewHolder(holder: MenuViewHolder, position: Int, model: Vista) {
                 val refid=getRef(position).key.toString()
+
                 Toast.makeText(this@HomeActivity,""+model.Name, Toast.LENGTH_SHORT).show()
                 ref.child(refid).addValueEventListener(object :ValueEventListener{
                     override fun onCancelled(p0: DatabaseError) {
@@ -77,11 +83,36 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
                         holder.itemView.setOnClickListener{
+
+                            /*Toast.makeText(this@HomeActivity," "+model.Name+" "+position+" "+model.Price, Toast.LENGTH_SHORT).show()*/
+
                             /*val intent= Intent(this@HomeActivity,InfoActivity::class.java)
                             intent.putExtra("FirebaseImagen",model.Photo)
                             intent.putExtra("FirebaseNombre",model.Name)
                             startActivity(intent)*/
-                            Toast.makeText(this@HomeActivity,""+model.Name+" Precio: "+model.Price.toString(), Toast.LENGTH_SHORT).show()
+
+                            val mDialogView=LayoutInflater.from(this@HomeActivity).inflate(R.layout.cantidad_dialog,null)
+                            val mBuilder=AlertDialog.Builder(this@HomeActivity)
+                                .setView(mDialogView)
+                                .setTitle("Agregar Cantidad")
+                            val mAlertDialog=mBuilder.show()
+
+                            mDialogView.Aceptar.setOnClickListener{
+                                val cantidad=mDialogView.cantidad.text.toString()
+                                Toast.makeText(this@HomeActivity,""+cantidad, Toast.LENGTH_SHORT).show()
+                                mAlertDialog.dismiss()
+                                Database(this@HomeActivity).addToVentas( DetallePedidos(
+                                    IdProducto = position.toString(),
+                                    NombreProducto = model.Name,
+                                    CantidadProducto = cantidad,
+                                    PrecioProducto = model.Price.toString()
+                                ))
+                                Toast.makeText(this@HomeActivity,"Item agregado a la venta", Toast.LENGTH_SHORT).show()
+                            }
+                            mDialogView.Cancelar.setOnClickListener{
+                                mAlertDialog.dismiss()
+                            }
+
                         }
 
                     }
@@ -102,8 +133,12 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
         fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+            Snackbar.make(view, "Carrito de Compras", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
+
+
+
+
         }
 
         val toggle = ActionBarDrawerToggle(
@@ -169,3 +204,4 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 }
+

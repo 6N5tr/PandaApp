@@ -18,7 +18,7 @@ class Database(context: Context?) : SQLiteAssetHelper(context, DB_NAME, null, DB
         var db=readableDatabase
         var qb=SQLiteQueryBuilder()
 
-        var sqlSelect= arrayOf("IdDetallePedido","IdProducto","NombreProducto","CantidadProducto","PrecioProducto")
+        var sqlSelect= arrayOf("IdProducto","NombreProducto","CantidadProducto","PrecioProducto")
         var sqlTable="DetallePedidos"
 
         qb.tables=sqlTable
@@ -32,7 +32,6 @@ class Database(context: Context?) : SQLiteAssetHelper(context, DB_NAME, null, DB
                 result.add(
                     (listOf(
                         DetallePedidos(
-                            c.getString(c.getColumnIndex("IdDetallePedido")),
                             c.getString(c.getColumnIndex("IdProducto")),
                             c.getString(c.getColumnIndex("NombreProducto")),
                             c.getString(c.getColumnIndex("CantidadProducto")),
@@ -45,10 +44,23 @@ class Database(context: Context?) : SQLiteAssetHelper(context, DB_NAME, null, DB
 
     }
 
-    fun addToVentas(){
+    fun addToVentas(detalle:DetallePedidos){
 
-        
+        var db=readableDatabase
+        var query= String.format("INSERT INTO DETALLEPEDIDOS(IdProducto,NombreProducto,CantidadProducto,PrecioProducto) " +
+                "VALUES ('%s','%s','%s','%s');",
+            detalle.IdProducto,detalle.NombreProducto,detalle.CantidadProducto,detalle.PrecioProducto)
+
+        db.execSQL(query)
     }
+
+    fun borrarTodoVentas(){
+        var db=readableDatabase
+        var query= String.format("DELETE FROM DETALLEPEDIDOS")
+        db.execSQL(query)
+    }
+
+
 
 }
 
