@@ -13,7 +13,8 @@ var DB_Ver:Int=1
 
 class Database(context: Context?) : SQLiteAssetHelper(context, DB_NAME, null, DB_Ver) {
 
-    fun getVentas(lista:List<DetallePedidos>){
+
+    fun getVentas(): List<DetallePedidos> {
 
         var db=readableDatabase
         var qb=SQLiteQueryBuilder()
@@ -24,24 +25,23 @@ class Database(context: Context?) : SQLiteAssetHelper(context, DB_NAME, null, DB
         qb.tables=sqlTable
         var c=qb.query(db,sqlSelect,null,null,null,null,null)
 
-        val result = ArrayList<List<DetallePedidos>>()
+        val result = arrayListOf<DetallePedidos>()
         //val result = lista
 
         if(c.moveToFirst()){
             do{
                 result.add(
-                    (listOf(
-                        DetallePedidos(
+                    (DetallePedidos(
                             c.getString(c.getColumnIndex("IdProducto")),
                             c.getString(c.getColumnIndex("NombreProducto")),
                             c.getString(c.getColumnIndex("CantidadProducto")),
                             c.getString(c.getColumnIndex("PrecioProducto")))
                     )
                             )
-                )
+
             }while (c.moveToNext())
         }
-
+        return result
     }
 
     fun addToVentas(detalle:DetallePedidos){

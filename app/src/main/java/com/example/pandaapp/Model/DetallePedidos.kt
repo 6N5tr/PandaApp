@@ -6,6 +6,8 @@ class DetallePedidos {
     var CantidadProducto:String?=null
     var PrecioProducto:String?=null
 
+    constructor():this("","","",""){}
+
     constructor(
         IdProducto: String?,
         NombreProducto: String?,

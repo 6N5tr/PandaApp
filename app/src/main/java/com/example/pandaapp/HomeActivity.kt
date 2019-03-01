@@ -1,5 +1,6 @@
 package com.example.pandaapp
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -13,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.GridLayout
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -31,6 +33,7 @@ import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_home.*
+import kotlinx.android.synthetic.main.cantidad_dialog.*
 import kotlinx.android.synthetic.main.cantidad_dialog.view.*
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -71,7 +74,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onBindViewHolder(holder: MenuViewHolder, position: Int, model: Vista) {
                 val refid=getRef(position).key.toString()
 
-                Toast.makeText(this@HomeActivity,""+model.Name, Toast.LENGTH_SHORT).show()
                 ref.child(refid).addValueEventListener(object :ValueEventListener{
                     override fun onCancelled(p0: DatabaseError) {
                     }
@@ -97,9 +99,14 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 .setTitle("Agregar Cantidad")
                             val mAlertDialog=mBuilder.show()
 
+                            val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                            inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
+
+
                             mDialogView.Aceptar.setOnClickListener{
                                 val cantidad=mDialogView.cantidad.text.toString()
-                                Toast.makeText(this@HomeActivity,""+cantidad, Toast.LENGTH_SHORT).show()
+                                val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                inputManager.hideSoftInputFromWindow(mDialogView.windowToken,0)
                                 mAlertDialog.dismiss()
                                 Database(this@HomeActivity).addToVentas( DetallePedidos(
                                     IdProducto = position.toString(),
@@ -107,10 +114,14 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                     CantidadProducto = cantidad,
                                     PrecioProducto = model.Price.toString()
                                 ))
+
                                 Toast.makeText(this@HomeActivity,"Item agregado a la venta", Toast.LENGTH_SHORT).show()
                             }
                             mDialogView.Cancelar.setOnClickListener{
+                                val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                inputManager.hideSoftInputFromWindow(mDialogView.windowToken,0)
                                 mAlertDialog.dismiss()
+
                             }
 
                         }
@@ -133,11 +144,12 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
         fab.setOnClickListener { view ->
-            Snackbar.make(view, "Carrito de Compras", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
 
+            /*Snackbar.make(view, "Preventa", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show()*/
 
-
+             var VentasIntent=Intent(this,VentasActivity::class.java)
+            startActivity(VentasIntent)
 
         }
 
@@ -154,8 +166,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     }
-
-
 
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {

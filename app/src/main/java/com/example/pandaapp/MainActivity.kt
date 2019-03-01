@@ -11,6 +11,7 @@ import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.pandaapp.Comun.Comun
+import com.example.pandaapp.Database.Database
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -30,6 +31,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        Database(baseContext).borrarTodoVentas()
 
         var imgG=findViewById<ImageView>(R.id.imggif)
         Glide.with(this).asGif()
