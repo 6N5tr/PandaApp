@@ -12,20 +12,22 @@
     <com.mancj.materialsearchbar.MaterialSearchBar
             style="@style/MaterialSearchBarLight"
             android:layout_alignParentTop="true"
-            app:mt_speechMode="false"
+            app:mt_speechMode="true"
             app:mt_hint="Buscar Producto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/searchBar" />
 
     <android.support.v7.widget.RecyclerView
+        android:layout_marginTop="2dp"
         android:layout_below="@+id/searchBar"
         android:id="@+id/recycler_menu"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-</android.support.v7.widget.RecyclerView>
+</android.support.v7.widget.RecyclerView
+>
 
     <ProgressBar
             android:id="@+id/probar"
