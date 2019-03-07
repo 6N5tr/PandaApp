@@ -1,5 +1,6 @@
 package com.example.pandaapp
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -53,13 +54,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var mRecyclerView:RecyclerView
 
     lateinit var show_progress:ProgressBar
-    var butspech: Int =MaterialSearchBar.BUTTON_SPEECH
 
    // var searchAdapter:FirebaseRecyclerAdapter<Vista, MenuViewHolder>?=null
     var sugerenciasLista= ArrayList<String>()
     var mSearchBar:MaterialSearchBar?=null
 
-
+    //SPEECH
+    private val REQUEST_CODE_SPEECH_INPUT=100
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,12 +102,11 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 when(buttonCode){
                     MaterialSearchBar.BUTTON_SPEECH ->
                     {
-                        if(MaterialSearchBar.BUTTON_SPEECH.equals(1)){
-                            Toast.makeText(this@HomeActivity,"Speech", Toast.LENGTH_SHORT).show()
-                        }
-                           else{
-                            Toast.makeText(this@HomeActivity,"No Speech", Toast.LENGTH_SHORT).show()
-                        }
+                        speak()
+
+                    }
+                    else->{
+
                     }
 
                 }
@@ -321,6 +321,34 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
+    private fun speak() {
+        val mIntent=Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        mIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        mIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,Locale.getDefault())
+        mIntent.putExtra(RecognizerIntent.EXTRA_PROMPT,"Di algo...")
+
+        try {
+            startActivityForResult(mIntent,REQUEST_CODE_SPEECH_INPUT)
+        }catch (e:Exception){
+            //Toast.makeText(this,e.message,Toast.LENGTH_SHORT).show()
+
+        }
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(requestCode){
+            REQUEST_CODE_SPEECH_INPUT->{
+                if(resultCode== Activity.RESULT_OK && null!=data){
+                    val result=data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                    mSearchBar!!.text = result[0]
+                }
+            }
+        }
+    }
+
 
     private fun startsearch(text: CharSequence?) {
        // var ref = database.getReference("Views")
@@ -398,7 +426,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     fun CargarSugerencias(){
 
-        Toast.makeText(this@HomeActivity,"Sugerencias Cargadas", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(this@HomeActivity,"Sugerencias Cargadas", Toast.LENGTH_SHORT).show()
 
         ref.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
