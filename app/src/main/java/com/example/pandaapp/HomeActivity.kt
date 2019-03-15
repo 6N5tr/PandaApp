@@ -8,6 +8,7 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
+import android.support.design.button.MaterialButton
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -37,6 +38,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.mancj.materialsearchbar.MaterialSearchBar
+import com.mancj.materialsearchbar.adapter.SuggestionsAdapter
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_main.*
@@ -55,7 +57,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     lateinit var show_progress:ProgressBar
 
-   // var searchAdapter:FirebaseRecyclerAdapter<Vista, MenuViewHolder>?=null
+   //Cargar Datos en Lista de Sugerencias
     var sugerenciasLista= ArrayList<String>()
     var mSearchBar:MaterialSearchBar?=null
 
@@ -74,26 +76,36 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         CargarSugerencias()
         this.searchBar.lastSuggestions=sugerenciasLista
         this.searchBar.setCardViewElevation(10)
+
         this.searchBar.addTextChangeListener(object: TextWatcher{
             override fun afterTextChanged(s: Editable?) {
-
 
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
-
             }
+
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 var sugerencias= ArrayList<String>()
                 for (coincidencia in sugerenciasLista) {
-
-                    if(coincidencia.toLowerCase().contains(searchBar.text.toLowerCase()))
+                    if(coincidencia.toLowerCase().contains(searchBar.text.toLowerCase())){
                         sugerencias.add(coincidencia)
+                    }
+
                 }
-                searchBar.lastSuggestions=sugerencias
-                //Toast.makeText(this@HomeActivity,"Click 5", Toast.LENGTH_SHORT).show()
+                if (sugerencias.isEmpty()){
+                    sugerencias.clear()
+                    searchBar.lastSuggestions = sugerencias
+                    Toast.makeText(this@HomeActivity, "Cambie su busqueda", Toast.LENGTH_SHORT).show()
+
+                }
+                else {
+                    searchBar.lastSuggestions = sugerencias
+
+                }
+
             }
 
         })
@@ -105,6 +117,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         speak()
 
                     }
+
+
                     else->{
 
                     }
@@ -118,7 +132,32 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
 
+
             override fun onSearchStateChanged(enabled: Boolean) {
+               if(enabled){
+
+                   searchBar.setSuggestionsClickListener(object: View.OnClickListener,
+                       SuggestionsAdapter.OnItemViewClickListener {
+                       override fun OnItemDeleteListener(position: Int, v: View?) {
+                           Toast.makeText(this@HomeActivity,"Holitra1", Toast.LENGTH_SHORT).show()
+                       }
+
+                       override fun OnItemClickListener(position: Int, v: View?) {
+                           Toast.makeText(this@HomeActivity,"Holitra2", Toast.LENGTH_SHORT).show()
+                       }
+
+                       override fun onClick(v: View?) {
+                           Toast.makeText(this@HomeActivity,"Holitra3", Toast.LENGTH_SHORT).show()
+                       }
+
+                   })
+
+
+
+
+                }
+                            // Toast.makeText(this@HomeActivity,"Aqui", Toast.LENGTH_SHORT).show()
+
                 if(!enabled){
                     val option = FirebaseRecyclerOptions.Builder<Vista>()
                         .setQuery(ref,Vista::class.java)
@@ -145,12 +184,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                                     holder.itemView.setOnClickListener{
 
-                                        /*Toast.makeText(this@HomeActivity," "+model.Name+" "+position+" "+model.Price, Toast.LENGTH_SHORT).show()*/
-
-                                        /*val intent= Intent(this@HomeActivity,InfoActivity::class.java)
-                                        intent.putExtra("FirebaseImagen",model.Photo)
-                                        intent.putExtra("FirebaseNombre",model.Name)
-                                        startActivity(intent)*/
 
                                         val mDialogView=LayoutInflater.from(this@HomeActivity).inflate(R.layout.cantidad_dialog,null)
                                         val mBuilder=AlertDialog.Builder(this@HomeActivity)
@@ -201,9 +234,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             override fun onSearchConfirmed(text: CharSequence?) {
                 startsearch(text)
-                //Toast.makeText(this@HomeActivity,"Search 1", Toast.LENGTH_SHORT).show()
-
-
             }
         })
 
@@ -219,6 +249,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //progressbar
         show_progress=findViewById(R.id.probar)
         //Recycler
+
         val option = FirebaseRecyclerOptions.Builder<Vista>()
             .setQuery(ref,Vista::class.java)
             .build()
@@ -314,10 +345,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
-
-
-
-
 
     }
 
@@ -431,6 +458,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         ref.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
 
+
             }
 
             override fun onDataChange(p0: DataSnapshot) {
@@ -441,7 +469,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     var price:Double=p0.child(i.toString()).child("Price").getValue().toString().toDouble()
                     val number: String ="%.2f".format(price)
 
-                    sugerenciasLista.add(item+" "+number)
+                    sugerenciasLista.add(item+"         $"+number)
 
                 }
             }
