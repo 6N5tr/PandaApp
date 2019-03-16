@@ -37,7 +37,7 @@ class VentasActivity : AppCompatActivity() {
 
     private var mFechayHora:String?=null
 
-
+    var total:Double=0.0
     var mVentas: List<DetallePedidos> = ArrayList()
 
 
@@ -65,44 +65,55 @@ class VentasActivity : AppCompatActivity() {
         CargarTotalVentas()
 
         btnVentaRealizada.setOnClickListener{
-            // Initialize a new instance of
-            val builder = AlertDialog.Builder(this@VentasActivity)
 
-            // Set the alert dialog title
-            builder.setTitle("Finalizar Venta")
+            if(total>0){
+                // Initialize a new instance of
+                val builder = AlertDialog.Builder(this@VentasActivity)
 
-            // Display a message on alert dialog
-            builder.setMessage("Desea finalizar la venta?")
+                // Set the alert dialog title
+                builder.setTitle("Finalizar Venta")
 
-            // Set a positive button and its click listener on alert dialog
-            builder.setPositiveButton("Aceptar"){dialog, which ->
-                // Do something when user press the positive button
-                var request=Request(Comun.currentUser,mTextTotal.text.toString(),Detalle = mVentas,FechayHora = mFechayHora )
+                // Display a message on alert dialog
+                builder.setMessage("Desea finalizar la venta?")
 
-                mRequest.child(Comun.currentUser+" "+System.currentTimeMillis().toString()).setValue(request)
+                // Set a positive button and its click listener on alert dialog
+                builder.setPositiveButton("Aceptar"){dialog, which ->
+                    // Do something when user press the positive button
+                    var request=Request(Comun.currentUser,mTextTotal.text.toString(),Detalle = mVentas,FechayHora = mFechayHora )
 
-                Database(baseContext).borrarTodoVentas()
+                    mRequest.child(Comun.currentUser+" "+System.currentTimeMillis().toString()).setValue(request)
 
-                finish()
+                    Database(baseContext).borrarTodoVentas()
 
-                Toast.makeText(applicationContext,"Venta Realizada!",Toast.LENGTH_SHORT).show()
+                    var HomeIntent= Intent(this,HomeActivity::class.java)
+                    startActivity(HomeIntent)
+
+                    finish()
+
+                    Toast.makeText(applicationContext,"Venta Realizada!",Toast.LENGTH_SHORT).show()
+
+                }
+
+
+                // Display a negative button on alert dialog
+                builder.setNegativeButton("Cancelar"){dialog,which ->
+                    builder.show().dismiss()
+                }
+
+
+                // Finally, make the alert dialog using builder
+                val dialog: AlertDialog = builder.create()
+
+                // Display the alert dialog on app interface
+                dialog.show()
+
+
 
             }
+            else{
 
-
-            // Display a negative button on alert dialog
-            builder.setNegativeButton("Cancelar"){dialog,which ->
-               builder.show().dismiss()
+                Toast.makeText(applicationContext,"Agregue productos para la venta!",Toast.LENGTH_SHORT).show()
             }
-
-
-             // Finally, make the alert dialog using builder
-            val dialog: AlertDialog = builder.create()
-
-            // Display the alert dialog on app interface
-            dialog.show()
-
-
 
 
 
@@ -157,6 +168,7 @@ class VentasActivity : AppCompatActivity() {
     override fun onBackPressed() {
         var HomeIntent= Intent(this,HomeActivity::class.java)
         startActivity(HomeIntent)
+        finish()
 
     }
     fun CargarTotalVentas(){
@@ -165,7 +177,7 @@ class VentasActivity : AppCompatActivity() {
         var mAdap=VentasAdapter(this,mVentas)
         mRecyclerView.adapter=mAdap
 
-        var total:Double=0.0
+
 
         for(e in mVentas)
             total+=((e.PrecioProducto)?.toDouble()!!)*((e.CantidadProducto)?.toDouble()!!)

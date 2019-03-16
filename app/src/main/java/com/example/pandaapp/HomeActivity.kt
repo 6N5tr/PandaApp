@@ -47,6 +47,7 @@ import kotlinx.android.synthetic.main.cantidad_dialog.view.*
 import kotlinx.android.synthetic.main.content_home.*
 import java.text.DecimalFormat
 import java.util.*
+import java.util.jar.Attributes
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -153,7 +154,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                                         mAlertDialog.dismiss()
                                                         Database(this@HomeActivity).addToVentas(
                                                             DetallePedidos(
-                                                                IdProducto = position.toString(),
+                                                                IdProducto =model.Id.toString(),
                                                                 NombreProducto = model.Name,
                                                                 CantidadProducto = cantidad,
                                                                 PrecioProducto = model.Price.toString()
@@ -269,7 +270,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                                 mAlertDialog.dismiss()
                                                 Database(this@HomeActivity).addToVentas(
                                                     DetallePedidos(
-                                                        IdProducto = position.toString(),
+                                                        IdProducto = model.Id.toString(),
                                                         NombreProducto = model.Name,
                                                         CantidadProducto = cantidad,
                                                         PrecioProducto = model.Price.toString()
@@ -319,7 +320,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar)
         txtFullName.setText(Comun.currentUser)
         mRecyclerView=findViewById(R.id.recycler_menu)
-        mRecyclerView.layoutManager=GridLayoutManager(this,3)
+        mRecyclerView.layoutManager= GridLayoutManager(this,3)
         //progressbar
         show_progress=findViewById(R.id.probar)
         //Recycler
@@ -380,7 +381,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                     mAlertDialog.dismiss()
                                     Database(this@HomeActivity).addToVentas(
                                         DetallePedidos(
-                                            IdProducto = position.toString(),
+                                            IdProducto = model.Id.toString(),
                                             NombreProducto = model.Name,
                                             CantidadProducto = cantidad,
                                             PrecioProducto = model.Price.toString()
@@ -509,7 +510,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             mDialogView.Aceptar.setOnClickListener{
                                 val cantidad = mDialogView.cantidad.text.toString()
                                 if (cantidad.isEmpty()) {
-                                    Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
+                                                 Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
                                 }
                                 else {
 
@@ -519,7 +520,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                     mAlertDialog.dismiss()
                                     Database(this@HomeActivity).addToVentas(
                                         DetallePedidos(
-                                            IdProducto = position.toString(),
+                                            IdProducto = model.Id.toString(),
                                             NombreProducto = model.Name,
                                             CantidadProducto = cantidad,
                                             PrecioProducto = model.Price.toString()
