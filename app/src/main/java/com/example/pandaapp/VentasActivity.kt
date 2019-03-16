@@ -1,7 +1,9 @@
 package com.example.pandaapp
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.view.GravityCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -15,6 +17,7 @@ import com.example.pandaapp.Model.Request
 import com.example.pandaapp.ViewHolder.VentasAdapter
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_ventas.*
 import java.text.NumberFormat
 import java.time.LocalDateTime
@@ -22,7 +25,6 @@ import java.util.*
 
 
 class VentasActivity : AppCompatActivity() {
-
 
     lateinit var mRecyclerView: RecyclerView
     lateinit var mLayout:RecyclerView.LayoutManager
@@ -60,6 +62,7 @@ class VentasActivity : AppCompatActivity() {
 
         mFechayHora= LocalDateTime.now().toString()
 
+        CargarTotalVentas()
 
         btnVentaRealizada.setOnClickListener{
             // Initialize a new instance of
@@ -103,14 +106,60 @@ class VentasActivity : AppCompatActivity() {
 
 
 
+        }
+        btnCancelarVenta.setOnClickListener{
+            val builder = AlertDialog.Builder(this@VentasActivity)
+
+            // Set the alert dialog title
+            builder.setTitle("Cancelar Venta")
+
+            // Display a message on alert dialog
+            builder.setMessage("Desea cancelar la venta?")
+
+            // Set a positive button and its click listener on alert dialog
+            builder.setPositiveButton("Aceptar"){dialog, which ->
+                // Do something when user press the positive button
+
+
+                Database(this).borrarTodoVentas()
+                mVentas= Database(context = this).getVentas()
+                var mAdap=VentasAdapter(this,mVentas)
+                mRecyclerView.adapter=mAdap
+
+                var HomeIntent= Intent(this,HomeActivity::class.java)
+                startActivity(HomeIntent)
+
+                finish()
+
+                Toast.makeText(applicationContext,"Venta Cancelada!",Toast.LENGTH_SHORT).show()
+
+            }
+
+
+            // Display a negative button on alert dialog
+            builder.setNegativeButton("Cancelar"){dialog,which ->
+                builder.show().dismiss()
+            }
+
+
+            // Finally, make the alert dialog using builder
+            val dialog: AlertDialog = builder.create()
+
+            // Display the alert dialog on app interface
+            dialog.show()
 
 
         }
-        cargarListaComida()
+
 
     }
 
-    fun cargarListaComida(){
+    override fun onBackPressed() {
+        var HomeIntent= Intent(this,HomeActivity::class.java)
+        startActivity(HomeIntent)
+
+    }
+    fun CargarTotalVentas(){
 
         mVentas=Database(context = this).getVentas()
         var mAdap=VentasAdapter(this,mVentas)

@@ -10,6 +10,7 @@ import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
 import android.support.design.button.MaterialButton
 import android.support.design.widget.NavigationView
+import android.support.v4.app.FragmentActivity
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
@@ -19,12 +20,10 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.example.pandaapp.Comun.Comun
 import com.example.pandaapp.Database.Database
 import com.example.pandaapp.Model.DetallePedidos
@@ -43,6 +42,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_home.*
+import kotlinx.android.synthetic.main.cantidad_dialog.*
 import kotlinx.android.synthetic.main.cantidad_dialog.view.*
 import kotlinx.android.synthetic.main.content_home.*
 import java.text.DecimalFormat
@@ -65,6 +65,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val REQUEST_CODE_SPEECH_INPUT=100
 
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -74,7 +76,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         mSearchBar = findViewById(R.id.searchBar)
         CargarSugerencias()
-        this.searchBar.lastSuggestions=sugerenciasLista
+        //this.searchBar.lastSuggestions=sugerenciasLista
         this.searchBar.setCardViewElevation(10)
 
         this.searchBar.addTextChangeListener(object: TextWatcher{
@@ -88,24 +90,109 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                var sugerencias= ArrayList<String>()
-                for (coincidencia in sugerenciasLista) {
-                    if(coincidencia.toLowerCase().contains(searchBar.text.toLowerCase())){
-                        sugerencias.add(coincidencia)
-                    }
+
+                if (searchBar.text.isEmpty()) {
 
                 }
-                if (sugerencias.isEmpty()){
-                    sugerencias.clear()
-                    searchBar.lastSuggestions = sugerencias
-                    Toast.makeText(this@HomeActivity, "Cambie su busqueda", Toast.LENGTH_SHORT).show()
+                else{
+                                           val option = FirebaseRecyclerOptions.Builder<Vista>()
+                            .setQuery(
+                                database.getReference("Views").orderByChild("Name").startAt(searchBar.text.first().toString().toUpperCase()).endAt(searchBar.text.toString()+"\uf8ff"),
+                                Vista::class.java
+                            )
+                            .build()
+
+                        val firebaseRecyclerAdapter =
+                            object : FirebaseRecyclerAdapter<Vista, MenuViewHolder>(option) {
+                                override fun onCreateViewHolder(p0: ViewGroup, p1: Int): MenuViewHolder {
+                                    val itemv = LayoutInflater.from(this@HomeActivity)
+                                        .inflate(R.layout.menu_item, p0, false)
+                                    return MenuViewHolder(itemv)
+                                }
+
+                                override fun onBindViewHolder(holder: MenuViewHolder, position: Int, model: Vista) {
+                                    val refid = getRef(position).key.toString()
+                                    ref.child(refid).addValueEventListener(object : ValueEventListener {
+                                        override fun onCancelled(p0: DatabaseError) {
+                                        }
+
+                                        override fun onDataChange(p0: DataSnapshot) {
+
+                                            val number: String = "%.2f".format(model.Price)
+                                            show_progress.visibility =
+                                                if (itemCount == 0) View.VISIBLE else View.GONE
+                                            holder.mNombre.setText(" " + model.Name)
+                                            holder.mPrecio.setText(number + " ")
+                                            Picasso.get().load(model.Photo).into(holder.mImagen)
+
+
+                                            holder.itemView.setOnClickListener {
+
+                                                val mDialogView = LayoutInflater.from(this@HomeActivity)
+                                                    .inflate(R.layout.cantidad_dialog, null)
+                                                val mBuilder = AlertDialog.Builder(this@HomeActivity)
+                                                    .setView(mDialogView)
+                                                    .setTitle("Agregar Cantidad")
+                                                val mAlertDialog = mBuilder.show()
+
+                                                val inputManager: InputMethodManager =
+                                                    getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                                inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+
+
+                                                mDialogView.Aceptar.setOnClickListener{
+                                                    val cantidad = mDialogView.cantidad.text.toString()
+                                                    if (cantidad.isEmpty()) {
+                                                        Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                    else {
+
+                                                        val inputManager: InputMethodManager =
+                                                            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                                        inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
+                                                        mAlertDialog.dismiss()
+                                                        Database(this@HomeActivity).addToVentas(
+                                                            DetallePedidos(
+                                                                IdProducto = position.toString(),
+                                                                NombreProducto = model.Name,
+                                                                CantidadProducto = cantidad,
+                                                                PrecioProducto = model.Price.toString()
+                                                            )
+                                                        )
+
+                                                        Toast.makeText(
+                                                            this@HomeActivity,
+                                                            "Item agregado a la venta",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                    }
+                                                }
+                                                mDialogView.Cancelar.setOnClickListener {
+                                                    val inputManager: InputMethodManager =
+                                                        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                                    inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
+                                                    mAlertDialog.dismiss()
+
+                                                }
+
+                                            }
+
+                                        }
+
+
+                                    })
+                                }
+
+
+                            }
+
+                        mRecyclerView.adapter = firebaseRecyclerAdapter
+                        firebaseRecyclerAdapter.startListening()
+
+
+
 
                 }
-                else {
-                    searchBar.lastSuggestions = sugerencias
-
-                }
-
             }
 
         })
@@ -125,42 +212,14 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 }
 
-
-                //openVoiceRecognizer()
-                    //
-
-
             }
 
 
             override fun onSearchStateChanged(enabled: Boolean) {
-               if(enabled){
-
-                   searchBar.setSuggestionsClickListener(object: View.OnClickListener,
-                       SuggestionsAdapter.OnItemViewClickListener {
-                       override fun OnItemDeleteListener(position: Int, v: View?) {
-                           Toast.makeText(this@HomeActivity,"Holitra1", Toast.LENGTH_SHORT).show()
-                       }
-
-                       override fun OnItemClickListener(position: Int, v: View?) {
-                           Toast.makeText(this@HomeActivity,"Holitra2", Toast.LENGTH_SHORT).show()
-                       }
-
-                       override fun onClick(v: View?) {
-                           Toast.makeText(this@HomeActivity,"Holitra3", Toast.LENGTH_SHORT).show()
-                       }
-
-                   })
-
-
-
-
-                }
-                            // Toast.makeText(this@HomeActivity,"Aqui", Toast.LENGTH_SHORT).show()
 
                 if(!enabled){
-                    val option = FirebaseRecyclerOptions.Builder<Vista>()
-                        .setQuery(ref,Vista::class.java)
+                     val option = FirebaseRecyclerOptions.Builder<Vista>()
+                        .setQuery(ref.orderByChild("Name"),Vista::class.java)
                         .build()
 
                     val firebaseRecyclerAdapter=object :FirebaseRecyclerAdapter<Vista,MenuViewHolder>(option){
@@ -175,6 +234,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 override fun onCancelled(p0: DatabaseError) {
                                 }
                                 override fun onDataChange(p0: DataSnapshot) {
+
+
                                     val number: String ="%.2f".format(model.Price)
                                     show_progress.visibility=if(itemCount==0) View.VISIBLE else View.GONE
                                     holder.mNombre.setText(" "+model.Name)
@@ -196,18 +257,31 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
                                         mDialogView.Aceptar.setOnClickListener{
-                                            val cantidad=mDialogView.cantidad.text.toString()
-                                            val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                                            inputManager.hideSoftInputFromWindow(mDialogView.windowToken,0)
-                                            mAlertDialog.dismiss()
-                                            Database(this@HomeActivity).addToVentas( DetallePedidos(
-                                                IdProducto = position.toString(),
-                                                NombreProducto = model.Name,
-                                                CantidadProducto = cantidad,
-                                                PrecioProducto = model.Price.toString()
-                                            ))
+                                            val cantidad = mDialogView.cantidad.text.toString()
+                                            if (cantidad.isEmpty()) {
+                                                Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
+                                            }
+                                            else {
 
-                                            Toast.makeText(this@HomeActivity,"Item agregado a la venta", Toast.LENGTH_SHORT).show()
+                                                val inputManager: InputMethodManager =
+                                                    getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                                inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
+                                                mAlertDialog.dismiss()
+                                                Database(this@HomeActivity).addToVentas(
+                                                    DetallePedidos(
+                                                        IdProducto = position.toString(),
+                                                        NombreProducto = model.Name,
+                                                        CantidadProducto = cantidad,
+                                                        PrecioProducto = model.Price.toString()
+                                                    )
+                                                )
+
+                                                Toast.makeText(
+                                                    this@HomeActivity,
+                                                    "Item agregado a la venta",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
                                         }
                                         mDialogView.Cancelar.setOnClickListener{
                                             val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -251,7 +325,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //Recycler
 
         val option = FirebaseRecyclerOptions.Builder<Vista>()
-            .setQuery(ref,Vista::class.java)
+            .setQuery(ref.orderByChild("Name"),Vista::class.java)
             .build()
 
         val firebaseRecyclerAdapter=object :FirebaseRecyclerAdapter<Vista,MenuViewHolder>(option){
@@ -266,6 +340,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     override fun onCancelled(p0: DatabaseError) {
                     }
                     override fun onDataChange(p0: DataSnapshot) {
+
                         val number: String ="%.2f".format(model.Price)
                         show_progress.visibility=if(itemCount==0) View.VISIBLE else View.GONE
                         holder.mNombre.setText(" "+model.Name)
@@ -293,18 +368,31 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
                             mDialogView.Aceptar.setOnClickListener{
-                                val cantidad=mDialogView.cantidad.text.toString()
-                                val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                                inputManager.hideSoftInputFromWindow(mDialogView.windowToken,0)
-                                mAlertDialog.dismiss()
-                                Database(this@HomeActivity).addToVentas( DetallePedidos(
-                                    IdProducto = position.toString(),
-                                    NombreProducto = model.Name,
-                                    CantidadProducto = cantidad,
-                                    PrecioProducto = model.Price.toString()
-                                ))
+                                val cantidad = mDialogView.cantidad.text.toString()
+                                if (cantidad.isEmpty()) {
+                                    Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
+                                }
+                                else {
 
-                                Toast.makeText(this@HomeActivity,"Item agregado a la venta", Toast.LENGTH_SHORT).show()
+                                    val inputManager: InputMethodManager =
+                                        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                    inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
+                                    mAlertDialog.dismiss()
+                                    Database(this@HomeActivity).addToVentas(
+                                        DetallePedidos(
+                                            IdProducto = position.toString(),
+                                            NombreProducto = model.Name,
+                                            CantidadProducto = cantidad,
+                                            PrecioProducto = model.Price.toString()
+                                        )
+                                    )
+
+                                    Toast.makeText(
+                                        this@HomeActivity,
+                                        "Item agregado a la venta",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
                             mDialogView.Cancelar.setOnClickListener{
                                 val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -335,6 +423,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
              var VentasIntent=Intent(this,VentasActivity::class.java)
             startActivity(VentasIntent)
+            finish()
 
         }
 
@@ -345,6 +434,10 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+
+    }
+
+    private fun filtrar(toString: String) {
 
     }
 
@@ -413,20 +506,32 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                             inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
 
-
                             mDialogView.Aceptar.setOnClickListener{
-                                val cantidad=mDialogView.cantidad.text.toString()
-                                val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                                inputManager.hideSoftInputFromWindow(mDialogView.windowToken,0)
-                                mAlertDialog.dismiss()
-                                Database(this@HomeActivity).addToVentas( DetallePedidos(
-                                    IdProducto = position.toString(),
-                                    NombreProducto = model.Name,
-                                    CantidadProducto = cantidad,
-                                    PrecioProducto = model.Price.toString()
-                                ))
+                                val cantidad = mDialogView.cantidad.text.toString()
+                                if (cantidad.isEmpty()) {
+                                    Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
+                                }
+                                else {
 
-                                Toast.makeText(this@HomeActivity,"Item agregado a la venta", Toast.LENGTH_SHORT).show()
+                                    val inputManager: InputMethodManager =
+                                        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                    inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
+                                    mAlertDialog.dismiss()
+                                    Database(this@HomeActivity).addToVentas(
+                                        DetallePedidos(
+                                            IdProducto = position.toString(),
+                                            NombreProducto = model.Name,
+                                            CantidadProducto = cantidad,
+                                            PrecioProducto = model.Price.toString()
+                                        )
+                                    )
+
+                                    Toast.makeText(
+                                        this@HomeActivity,
+                                        "Item agregado a la venta",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
                             mDialogView.Cancelar.setOnClickListener{
                                 val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -457,19 +562,18 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         ref.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-
-
             }
 
             override fun onDataChange(p0: DataSnapshot) {
 
+                sugerenciasLista.clear()
+
                 for (i in 1.rangeTo(p0.childrenCount)) {
 
                     val item = p0.child(i.toString()).child("Name").getValue().toString()
-                    var price:Double=p0.child(i.toString()).child("Price").getValue().toString().toDouble()
-                    val number: String ="%.2f".format(price)
 
-                    sugerenciasLista.add(item+"         $"+number)
+
+                    sugerenciasLista.add(item)
 
                 }
             }

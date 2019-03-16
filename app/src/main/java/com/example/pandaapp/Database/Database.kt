@@ -13,7 +13,6 @@ var DB_Ver:Int=1
 
 class Database(context: Context?) : SQLiteAssetHelper(context, DB_NAME, null, DB_Ver) {
 
-
     fun getVentas(): List<DetallePedidos> {
 
         var db=readableDatabase

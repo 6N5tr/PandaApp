@@ -24,6 +24,7 @@
         <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent">
 
             <LinearLayout
+                    android:id="@+id/linea"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
@@ -46,6 +47,14 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                    android:id="@+id/menuLinearLayout"
+                     android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_below="@+id/linea"
+                    android:weightSum="2">
+
             <Button
                     android:id="@+id/btnVentaRealizada"
                     android:text="Finalizar Venta"
@@ -56,9 +65,26 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/botonesinicio"
-                    android:layout_marginTop="20dp" android:layout_marginStart="8dp" android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:layout_marginTop="10dp" android:layout_marginStart="8dp" android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"/>
+            <Button
+                    android:id="@+id/btnCancelarVenta"
+                    android:layout_weight="1"
+                    android:text="Cancelar Venta"
+                    android:textColor="@android:color/white"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/botonesinicio"
+                    android:layout_marginTop="10dp" android:layout_marginStart="8dp" android:layout_marginEnd="8dp"
                     android:layout_marginBottom="8dp"/>
 
+
+
+            </LinearLayout>
 
         </RelativeLayout>
 
