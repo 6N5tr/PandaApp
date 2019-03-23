@@ -1,5 +1,7 @@
 package com.example.pandaapp
 
+import android.content.ClipData
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -7,6 +9,9 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -15,10 +20,12 @@ import com.example.pandaapp.Database.Database
 import com.example.pandaapp.Model.DetallePedidos
 import com.example.pandaapp.Model.Request
 import com.example.pandaapp.ViewHolder.VentasAdapter
+import com.example.pandaapp.ViewHolder.VentasViewHolder
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_ventas.*
+import kotlinx.android.synthetic.main.cantidad_dialog.view.*
 import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.util.*
@@ -163,6 +170,9 @@ class VentasActivity : AppCompatActivity() {
         }
 
 
+
+
+
     }
 
     override fun onBackPressed() {
@@ -177,9 +187,60 @@ class VentasActivity : AppCompatActivity() {
         var mAdap=VentasAdapter(this,mVentas)
         mRecyclerView.adapter=mAdap
 
+        mAdap.setOnClickListener(View.OnClickListener {
+            var IdPro=mVentas.get(mRecyclerView.getChildAdapterPosition(it)).IdProducto
+
+            val mDialogView= LayoutInflater.from(this@VentasActivity).inflate(R.layout.cantidad_dialog,null)
+            val mBuilder=AlertDialog.Builder(this@VentasActivity)
+                .setView(mDialogView)
+                .setTitle("Agregar Cantidad")
+            val mAlertDialog=mBuilder.show()
+
+            val inputManager: InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
 
 
-        for(e in mVentas)
+            mDialogView.Aceptar.setOnClickListener{
+                val cantidad = mDialogView.cantidad.text.toString()
+                if (cantidad.isEmpty()) {
+                    Toast.makeText(this@VentasActivity,"Agregue la nueva cantidad", Toast.LENGTH_SHORT).show()
+                }
+                else {
+
+                    val inputManager: InputMethodManager =
+                        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
+                    mAlertDialog.dismiss()
+
+                    Database(this@VentasActivity).editVenta(
+                        Id= IdPro!!.toInt(),
+                        cantidad = cantidad
+                    )
+
+                    total=0.0
+
+                    CargarTotalVentas()
+
+                    Toast.makeText(
+                        this@VentasActivity,
+                        "Item modificado!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            mDialogView.Cancelar.setOnClickListener{
+                val inputManager: InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputManager.hideSoftInputFromWindow(mDialogView.windowToken,0)
+                mAlertDialog.dismiss()
+
+            }
+
+
+
+        })
+
+
+           for(e in mVentas)
             total+=((e.PrecioProducto)?.toDouble()!!)*((e.CantidadProducto)?.toDouble()!!)
 
 

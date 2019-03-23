@@ -59,6 +59,13 @@ class Database(context: Context?) : SQLiteAssetHelper(context, DB_NAME, null, DB
         db.execSQL(query)
     }
 
+    fun editVenta(Id:Int,cantidad:String){
+        var db=readableDatabase
+        var query= String.format("UPDATE DETALLEPEDIDOS\n" +
+                "SET CantidadProducto = "+cantidad.toInt()+"\n" +
+                "WHERE IdProducto="+Id+";")
+        db.execSQL(query)
+    }
 
 
 }

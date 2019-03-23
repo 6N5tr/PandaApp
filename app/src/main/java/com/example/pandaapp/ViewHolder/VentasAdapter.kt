@@ -18,20 +18,25 @@ import java.util.*
 import kotlin.contracts.contract
 
 
-class VentasViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener{
+class VentasViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
 
 
     var mNombre:TextView=itemView.findViewById(com.example.pandaapp.R.id.venta_item_name)
     var mImagen: ImageView =itemView.findViewById(com.example.pandaapp.R.id.venta_item_img)
     var mPrecio:TextView=itemView.findViewById(com.example.pandaapp.R.id.venta_item_price)
 
-    override fun onClick(v: View?) {
-
-    }
 
 }
 
-class VentasAdapter(context:Context,listData:List<DetallePedidos>): RecyclerView.Adapter<VentasViewHolder>() {
+class VentasAdapter(context:Context,listData:List<DetallePedidos>): RecyclerView.Adapter<VentasViewHolder>(),View.OnClickListener {
+    override fun onClick(v: View?) {
+    if(listener!=null){
+        listener!!.onClick(v)
+    }
+    }
+
+    var listener:View.OnClickListener?=null
+
 
 
     var listData= listData
@@ -41,6 +46,8 @@ class VentasAdapter(context:Context,listData:List<DetallePedidos>): RecyclerView
 
 
          val itemv=LayoutInflater.from(this.context).inflate(com.example.pandaapp.R.layout.preventa_layout,p0,false)
+
+         itemv.setOnClickListener(this)
 
          return VentasViewHolder(itemv)
 
@@ -70,6 +77,12 @@ class VentasAdapter(context:Context,listData:List<DetallePedidos>): RecyclerView
 
 
 
+
+
+    }
+
+    fun setOnClickListener(listener:View.OnClickListener){
+            this.listener=listener
     }
 
 }
