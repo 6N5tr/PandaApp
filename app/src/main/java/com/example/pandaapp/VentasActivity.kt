@@ -193,7 +193,7 @@ class VentasActivity : AppCompatActivity() {
             val mDialogView= LayoutInflater.from(this@VentasActivity).inflate(R.layout.cantidad_dialog,null)
             val mBuilder=AlertDialog.Builder(this@VentasActivity)
                 .setView(mDialogView)
-                .setTitle("Agregar Cantidad")
+                .setTitle("Agregar Nueva Cantidad")
             val mAlertDialog=mBuilder.show()
 
             val inputManager: InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
