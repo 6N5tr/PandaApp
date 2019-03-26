@@ -122,8 +122,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                             val number: String = "%.2f".format(model.Price)
                                             show_progress.visibility =
                                                 if (itemCount == 0) View.VISIBLE else View.GONE
-                                            holder.mNombre.setText(" " + model.Name)
-                                            holder.mPrecio.setText(number + " ")
+                                            holder.mNombre.text = " " + model.Name
+                                            holder.mPrecio.text = number + " "
                                             Picasso.get().load(model.Photo).into(holder.mImagen)
 
 
@@ -239,8 +239,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                                     val number: String ="%.2f".format(model.Price)
                                     show_progress.visibility=if(itemCount==0) View.VISIBLE else View.GONE
-                                    holder.mNombre.setText(" "+model.Name)
-                                    holder.mPrecio.setText(number+" ")
+                                    holder.mNombre.text = " "+model.Name
+                                    holder.mPrecio.text = number+" "
                                     Picasso.get().load(model.Photo).into(holder.mImagen)
 
 
@@ -316,9 +316,9 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
         //Name En La Barra
-        toolbar.setTitle(Comun.currentUser)
+        toolbar.title = Comun.currentUser
         setSupportActionBar(toolbar)
-        txtFullName.setText(Comun.currentUser)
+        txtFullName.text = Comun.currentUser
         mRecyclerView=findViewById(R.id.recycler_menu)
         mRecyclerView.layoutManager= GridLayoutManager(this,3)
         //progressbar
@@ -344,8 +344,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                         val number: String ="%.2f".format(model.Price)
                         show_progress.visibility=if(itemCount==0) View.VISIBLE else View.GONE
-                        holder.mNombre.setText(" "+model.Name)
-                        holder.mPrecio.setText(number+" ")
+                        holder.mNombre.text = " "+model.Name
+                        holder.mPrecio.text = number+" "
                         Picasso.get().load(model.Photo).into(holder.mImagen)
 
 
@@ -447,7 +447,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
             RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
         mIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,Locale.getDefault())
-        mIntent.putExtra(RecognizerIntent.EXTRA_PROMPT,"Di algo...")
+        mIntent.putExtra(RecognizerIntent.EXTRA_PROMPT,"Usa tu voz...")
 
         try {
             startActivityForResult(mIntent,REQUEST_CODE_SPEECH_INPUT)
@@ -491,8 +491,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     override fun onDataChange(p0: DataSnapshot) {
                         val number: String ="%.2f".format(model.Price)
                         show_progress.visibility=if(itemCount==0) View.VISIBLE else View.GONE
-                        holder.mNombre.setText(" "+model.Name)
-                        holder.mPrecio.setText(number+" ")
+                        holder.mNombre.text = " "+model.Name
+                        holder.mPrecio.text = number+" "
                         Picasso.get().load(model.Photo).into(holder.mImagen)
 
 
@@ -571,7 +571,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 for (i in 1.rangeTo(p0.childrenCount)) {
 
-                    val item = p0.child(i.toString()).child("Name").getValue().toString()
+                    val item = p0.child(i.toString()).child("Name").value.toString()
 
 
                     sugerenciasLista.add(item)
