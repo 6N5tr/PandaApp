@@ -85,4 +85,12 @@ class VentasAdapter(context:Context,listData:List<DetallePedidos>): RecyclerView
             this.listener=listener
     }
 
+    fun removeAt(position: Int) {
+        var lista=listData.toMutableList()
+        lista.removeAt(position)
+        listData=lista
+        notifyItemRemoved(position)
+    }
+
+
 }
