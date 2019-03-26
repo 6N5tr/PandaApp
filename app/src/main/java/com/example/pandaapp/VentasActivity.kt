@@ -37,6 +37,8 @@ import com.example.pandaapp.Swipe.SwipeToDeleteCallback
 
 class VentasActivity : AppCompatActivity() {
 
+    var evento=0
+
     lateinit var mRecyclerView: RecyclerView
     lateinit var mLayout:RecyclerView.LayoutManager
 
@@ -74,6 +76,7 @@ class VentasActivity : AppCompatActivity() {
         mFechayHora= LocalDateTime.now().toString()
 
         CargarTotalVentas()
+
 
         btnVentaRealizada.setOnClickListener{
 
@@ -176,32 +179,13 @@ class VentasActivity : AppCompatActivity() {
 
         //Swipe
 
-        mVentas=Database(context = this).getVentas()
-        var mAdap=VentasAdapter(this,mVentas)
-
-        mRecyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-        mRecyclerView.layoutManager = LinearLayoutManager(this)
-        mRecyclerView.adapter=mAdap
-
-          val swipeHandler = object : SwipeToDeleteCallback(this) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                var IdPro=mVentas.get(viewHolder.adapterPosition).IdProducto
-                Database(this@VentasActivity).eliminaItem(
-                    Id= IdPro!!.toInt()
-                )
-                Toast.makeText(this@VentasActivity,"Venta Modificada!",Toast.LENGTH_SHORT).show()
-                mAdap.removeAt(viewHolder.adapterPosition)
-            }
-        }
-        val itemTouchHelper = ItemTouchHelper(swipeHandler)
-        itemTouchHelper.attachToRecyclerView(mRecyclerView)
-
 
 
 
 
     }
 
+   
     override fun onBackPressed() {
         var HomeIntent= Intent(this,HomeActivity::class.java)
         startActivity(HomeIntent)
@@ -212,7 +196,24 @@ class VentasActivity : AppCompatActivity() {
 
         mVentas=Database(context = this).getVentas()
         var mAdap=VentasAdapter(this,mVentas)
+        mRecyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        mRecyclerView.layoutManager = LinearLayoutManager(this)
         mRecyclerView.adapter=mAdap
+
+        val swipeHandler = object : SwipeToDeleteCallback(this) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                var IdPro=mVentas.get(viewHolder.adapterPosition).IdProducto
+                Database(this@VentasActivity).eliminaItem(
+                    Id= IdPro!!.toInt()
+                )
+                mAdap.removeAt(viewHolder.adapterPosition)
+                Toast.makeText(this@VentasActivity,"Venta Modificada!",Toast.LENGTH_SHORT).show()
+                CargarTotalVentas()
+
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(mRecyclerView)
 
         mAdap.setOnClickListener(View.OnClickListener {
             var IdPro=mVentas.get(mRecyclerView.getChildAdapterPosition(it)).IdProducto
