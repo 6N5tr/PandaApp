@@ -76,13 +76,18 @@ class VentasAdapter(context:Context,listData:List<DetallePedidos>): RecyclerView
         p0.mNombre.text = listData.get(p1).NombreProducto
 
 
-
-
-
     }
 
     fun setOnClickListener(listener:View.OnClickListener){
             this.listener=listener
     }
+
+    fun removeAt(position: Int) {
+        var lista=listData.toMutableList()
+        lista.removeAt(position)
+        listData=lista
+        notifyItemRemoved(position)
+    }
+
 
 }
