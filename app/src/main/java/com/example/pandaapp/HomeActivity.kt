@@ -36,6 +36,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.zxing.integration.android.IntentIntegrator
 import com.mancj.materialsearchbar.MaterialSearchBar
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter
 import com.squareup.picasso.Picasso
@@ -53,6 +54,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     var database = FirebaseDatabase.getInstance()
     var ref = database.getReference("Views")
+
 
     lateinit var mRecyclerView:RecyclerView
 
@@ -74,6 +76,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val toolbar=findViewById<Toolbar>(R.id.toolbar)
         var headerView=nav_view.getHeaderView(0)
         val txtFullName=headerView.findViewById<TextView>(R.id.textView)
+
+        var codebar=findViewById<ImageView>(R.id.barcode)
+        codebar.setOnClickListener {
+            getCodebar()
+        }
+
+
 
         mSearchBar = findViewById(R.id.searchBar)
         CargarSugerencias()
@@ -206,10 +215,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                     }
 
-
-                    else->{
-
-                    }
 
                 }
 
@@ -438,9 +443,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
-    private fun filtrar(toString: String) {
+    private fun getCodebar() {
 
+        val scanner=IntentIntegrator(this)
+        scanner.initiateScan()
     }
+
+
 
     private fun speak() {
         val mIntent=Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -467,7 +476,48 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     mSearchBar!!.text = result[0]
                 }
             }
+
         }
+        when(resultCode){
+            Activity.RESULT_OK->{
+                Toast.makeText(this, "Codigo Obtenido", Toast.LENGTH_LONG).show()
+                val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+                if (result != null) {
+                    if (result.contents == null) {
+                        Toast.makeText(this, "Escaneo Terminado!", Toast.LENGTH_LONG).show()
+                    } else {
+                        var codebar=result.contents.toString()
+                        var producto=""
+                        ref.addValueEventListener(object : ValueEventListener {
+                            override fun onCancelled(p0: DatabaseError) {
+                            }
+
+                            override fun onDataChange(p0: DataSnapshot) {
+
+                                for (i in 1.rangeTo(p0.childrenCount)) {
+
+                                    val itemName = p0.child(i.toString()).child("Name").value.toString()
+                                    val itemCode = p0.child(i.toString()).child("Codebar").value.toString()
+                                                if(codebar==itemCode){
+                                                    producto=itemName
+                                                }
+
+                                }
+                            }
+
+                        })
+
+
+                        mSearchBar!!.text = producto
+                        Toast.makeText(this@HomeActivity,"Agregado"+producto, Toast.LENGTH_SHORT).show()
+
+                    }
+                } else {
+                    super.onActivityResult(requestCode, resultCode, data)
+                }
+            }
+        }
+
     }
 
 
@@ -628,6 +678,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
+
 
 }
 

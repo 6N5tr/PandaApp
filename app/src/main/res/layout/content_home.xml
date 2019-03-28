@@ -8,19 +8,44 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:showIn="@layout/app_bar_home"
         tools:context=".HomeActivity">
+    
+<LinearLayout
+        android:id="@+id/Formas"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <com.mancj.materialsearchbar.MaterialSearchBar
             style="@style/MaterialSearchBarLight"
-            android:layout_alignParentTop="true"
             app:mt_speechMode="true"
+            android:layout_alignParentTop="true"
             app:mt_hint="Buscar Producto"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="5"
             android:id="@+id/searchBar" />
+
+    <ImageView
+            android:id="@+id/barcode"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_account_barcode_24dp"
+            android:padding="10dp"
+            android:background="@color/overlayBackground"
+            android:layout_weight="1"
+    />
+
+
+</LinearLayout>
+
+
+
+
+
 
     <android.support.v7.widget.RecyclerView
         android:layout_marginTop="2dp"
-        android:layout_below="@+id/searchBar"
+        android:layout_below="@+id/Formas"
         android:id="@+id/recycler_menu"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
