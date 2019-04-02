@@ -65,6 +65,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var sugerenciasLista= ArrayList<String>()
     var mSearchBar:MaterialSearchBar?=null
 
+    var mostrar:String?=null
+
     //SPEECH
     private val REQUEST_CODE_SPEECH_INPUT=100
 
@@ -104,12 +106,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 }
                 else{
-                                           val option = FirebaseRecyclerOptions.Builder<Vista>()
-                            .setQuery(
-                                database.getReference("Views").orderByChild("Name").startAt(searchBar.text.first().toString().toUpperCase()).endAt(searchBar.text.toString()+"\uf8ff"),
-                                Vista::class.java
-                            )
-                            .build()
+                    val option = FirebaseRecyclerOptions.Builder<Vista>()
+                        .setQuery(
+                            database.getReference("Views").orderByChild("Name").startAt(searchBar.text.first().toString().toUpperCase()+searchBar.text.toString().substring(1,searchBar.text.length))
+                                .endAt(searchBar.text.toString().substring(1,searchBar.text.length)+"\uf8ff"),
+                            Vista::class.java
+                        )
+                        .build()
 
                         val firebaseRecyclerAdapter =
                             object : FirebaseRecyclerAdapter<Vista, MenuViewHolder>(option) {
