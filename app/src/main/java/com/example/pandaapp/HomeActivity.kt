@@ -4,14 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
-import android.speech.SpeechRecognizer
-import android.speech.tts.TextToSpeech
-import android.support.design.button.MaterialButton
 import android.support.design.widget.NavigationView
-import android.support.design.widget.Snackbar
-import android.support.v4.app.FragmentActivity
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
@@ -25,31 +19,30 @@ import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import com.example.pandaapp.Class.Body
 import com.example.pandaapp.Comun.Comun
 import com.example.pandaapp.Database.Database
+import com.example.pandaapp.Messaging.eltak
 import com.example.pandaapp.Model.DetallePedidos
 import com.example.pandaapp.Model.Vista
-import com.example.pandaapp.R.id.*
 import com.example.pandaapp.ViewHolder.MenuViewHolder
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.fuel.httpPost
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.gson.Gson
 import com.google.zxing.integration.android.IntentIntegrator
 import com.mancj.materialsearchbar.MaterialSearchBar
-import com.mancj.materialsearchbar.adapter.SuggestionsAdapter
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_home.*
-import kotlinx.android.synthetic.main.cantidad_dialog.*
 import kotlinx.android.synthetic.main.cantidad_dialog.view.*
 import kotlinx.android.synthetic.main.content_home.*
-import java.text.DecimalFormat
 import java.util.*
-import java.util.jar.Attributes
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -64,8 +57,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
    //Cargar Datos en Lista de Sugerencias
     var sugerenciasLista= ArrayList<String>()
     var mSearchBar:MaterialSearchBar?=null
-
-    var mostrar:String?=null
 
     //SPEECH
     private val REQUEST_CODE_SPEECH_INPUT=100
@@ -596,9 +587,12 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun startsearch(text: CharSequence?) {
        // var ref = database.getReference("Views")
         val option = FirebaseRecyclerOptions.Builder<Vista>()
-            .setQuery(database.getReference("Views").orderByChild("Name").equalTo(text.toString()),Vista::class.java)
+            .setQuery(
+                database.getReference("Views").orderByChild("Name").startAt(searchBar.text.first().toString().toUpperCase()+searchBar.text.toString().substring(1,searchBar.text.length))
+                    .endAt(searchBar.text.toString().substring(1,searchBar.text.length)+"\uf8ff"),
+                Vista::class.java
+            )
             .build()
-
         val firebaseRecyclerAdapter=object :FirebaseRecyclerAdapter<Vista,MenuViewHolder>(option){
             override fun onCreateViewHolder(p0: ViewGroup, p1: Int): MenuViewHolder {
                 val itemv=LayoutInflater.from(this@HomeActivity).inflate(R.layout.menu_item,p0,false)
@@ -733,9 +727,22 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_menu -> {
-                // Handle the camera action
+
+
             }
             R.id.nav_ventas -> {
+                val post= Body(
+                    "eRl36Bv4DFc:APA91bGACko4g3ikV3TVldBpDqA_SE5YTNQLhKHJ2gm0wxAZ90vzmwmipIG6Q3uEILpzxnEPnB6LQgJvnKiaYS3WCLbpfhvfU01bZ970pQGTSO4CHPOerUgvTiK7B3ndXtPoNrkUudVX",
+                     "Prueba", "Final"
+                )
+                val postJson = Gson().toJson(post)
+
+
+                "https://fcm.googleapis.com/fcm/send".httpPost().header("Content-Type" to "application/json","Authorization" to "key=AAAAipzqo8Q:APA91bFj6kxPPulVslLckgeEVbw-yoy_rrH27uXR3kMQrBvt94SC2d-fCbZJJcKSmujH-9GwHJPyCAao6L8clpA5W8-nPjrLm4yK2CnLJZJw3qrFdQGLWd5_dq7hzp3fVF82WWUhMvKy").body(postJson.toString()).response { req, res, result ->
+                    Log.d(eltak,""+ postJson.toString())
+                    Toast.makeText(this@HomeActivity,"Mensaje Enviado", Toast.LENGTH_SHORT).show()
+                }
+
 
             }
             R.id.nav_productos -> {
@@ -750,6 +757,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
+
+
 
 
 }

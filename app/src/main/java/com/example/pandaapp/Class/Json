@@ -1,0 +1,12 @@
+{
+  "to":"dg69ANa57zI:APA91bGmV2uIJ4Xm_w9oC5Srfjeh_j3gSQ14YDKptkZI6VG0anZcO3jBFOWO8VZTMOXdJ8EboYGAjCpA2qmPd6RwZXhyiDWhieBt_fsuGN8aGpw9B_W1yPbThQV1RNeyHhjAyAjrb5qQ"
+
+  "notification":{
+    "title":"Fea",
+    "body":"Donde esta el amor?"
+  },
+  "data":{
+    "titulo":"Este es el titular",
+    "descripcion":"Aquie estara todo el contenido de la noticia"
+  }
+}

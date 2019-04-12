@@ -4,8 +4,6 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
@@ -17,7 +15,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_main.*
-import com.google.firebase.database.DatabaseReference
+
 
 
 
@@ -61,7 +59,7 @@ class MainActivity : AppCompatActivity() {
                for ( i in 1.rangeTo(p0.childrenCount)){
 
 
-                    val valor=p0.child(i.toString()).child("Name").getValue().toString()
+                    val valor=p0.child(i.toString()).child("Name").value.toString()
 
                     if(valor.equals(edtName.text.toString())){
                         position=i.toInt()
@@ -71,10 +69,10 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 //if(p0.child(position.toString()).exists()){}
-                if(edtPass.text.toString().equals(p0.child(position.toString()).child("Pass").getValue().toString())){
+                if(edtPass.text.toString().equals(p0.child(position.toString()).child("Pass").value.toString())){
                     Toast.makeText(this@MainActivity,"Ingreso Valido", Toast.LENGTH_SHORT).show()
                     pD.dismiss()
-                    Comun.currentUser=p0.child(position.toString()).child("Name").getValue().toString()
+                    Comun.currentUser=p0.child(position.toString()).child("Name").value.toString()
                     val intento = Intent(this@MainActivity,HomeActivity::class.java)
                     startActivity(intento)
                     position=0
