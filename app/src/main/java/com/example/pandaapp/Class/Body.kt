@@ -1,5 +1,7 @@
 package com.example.pandaapp.Class
 
-import java.util.*
+class Estructura(var to: String, var notification:notification)
 
-class Body(var to:String,var tit:String,var bod:String)
+class notification(var title: String,var body:String)
+
+

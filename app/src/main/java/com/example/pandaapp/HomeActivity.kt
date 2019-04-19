@@ -19,7 +19,8 @@ import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import com.example.pandaapp.Class.Body
+import com.example.pandaapp.Class.Estructura
+import com.example.pandaapp.Class.notification
 import com.example.pandaapp.Comun.Comun
 import com.example.pandaapp.Database.Database
 import com.example.pandaapp.Messaging.eltak
@@ -28,7 +29,6 @@ import com.example.pandaapp.Model.Vista
 import com.example.pandaapp.ViewHolder.MenuViewHolder
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -731,18 +731,19 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
             R.id.nav_ventas -> {
-                val post= Body(
+                val post= Estructura(
                     "eRl36Bv4DFc:APA91bGACko4g3ikV3TVldBpDqA_SE5YTNQLhKHJ2gm0wxAZ90vzmwmipIG6Q3uEILpzxnEPnB6LQgJvnKiaYS3WCLbpfhvfU01bZ970pQGTSO4CHPOerUgvTiK7B3ndXtPoNrkUudVX",
-                     "Prueba", "Final"
+                    notification(title = "hola",body = "chao")
                 )
                 val postJson = Gson().toJson(post)
 
-
-                "https://fcm.googleapis.com/fcm/send".httpPost().header("Content-Type" to "application/json","Authorization" to "key=AAAAipzqo8Q:APA91bFj6kxPPulVslLckgeEVbw-yoy_rrH27uXR3kMQrBvt94SC2d-fCbZJJcKSmujH-9GwHJPyCAao6L8clpA5W8-nPjrLm4yK2CnLJZJw3qrFdQGLWd5_dq7hzp3fVF82WWUhMvKy").body(postJson.toString()).response { req, res, result ->
-                    Log.d(eltak,""+ postJson.toString())
+                "https://fcm.googleapis.com/fcm/send".httpPost()
+                    .header(
+                    "Content-Type" to "application/json",
+                    "Authorization" to "key=AAAAipzqo8Q:APA91bFj6kxPPulVslLckgeEVbw-yoy_rrH27uXR3kMQrBvt94SC2d-fCbZJJcKSmujH-9GwHJPyCAao6L8clpA5W8-nPjrLm4yK2CnLJZJw3qrFdQGLWd5_dq7hzp3fVF82WWUhMvKy")
+                    .body(postJson.toString()).response { req, res, result ->
                     Toast.makeText(this@HomeActivity,"Mensaje Enviado", Toast.LENGTH_SHORT).show()
                 }
-
 
             }
             R.id.nav_productos -> {
