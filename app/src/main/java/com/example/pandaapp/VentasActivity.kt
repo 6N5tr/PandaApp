@@ -177,11 +177,6 @@ class VentasActivity : AppCompatActivity() {
         }
 
 
-        //Swipe
-
-
-
-
 
     }
 

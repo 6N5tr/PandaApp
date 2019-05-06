@@ -74,6 +74,22 @@ class Database(context: Context?) : SQLiteAssetHelper(context, DB_NAME, null, DB
         db.execSQL(query)
     }
 
+     fun checkItem(nombre:String):Boolean{
+        var db=readableDatabase
+        var query= String.format("SELECT * FROM DETALLEPEDIDOS\n" +
+                "WHERE NombreProducto="+nombre+";")
+
+        db.execSQL(query)
+        val cursor = db.rawQuery(query, null)
+
+        if(cursor.count <= 0){
+            cursor.close()
+            return false
+        }
+        cursor.close()
+        return true
+    }
+
 
 }
 

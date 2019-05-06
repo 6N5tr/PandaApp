@@ -154,20 +154,32 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                                             getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                                         inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
                                                         mAlertDialog.dismiss()
-                                                        Database(this@HomeActivity).addToVentas(
-                                                            DetallePedidos(
-                                                                IdProducto =model.Id.toString(),
-                                                                NombreProducto = model.Name,
-                                                                CantidadProducto = cantidad,
-                                                                PrecioProducto = model.Price.toString()
-                                                            )
-                                                        )
 
-                                                        Toast.makeText(
-                                                            this@HomeActivity,
-                                                            "Item agregado a la venta",
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
+                                                        //Agregar comparacion de pedidos.
+
+                                                        if(Database(this@HomeActivity).checkItem(nombre=  model.Name!!.toString())==true){
+                                                            Toast.makeText(this@HomeActivity,"Item Duplicado", Toast.LENGTH_SHORT).show()
+                                                        }
+                                                        else{
+                                                            Database(this@HomeActivity).addToVentas(
+                                                                DetallePedidos(
+                                                                    IdProducto =model.Id.toString(),
+                                                                    NombreProducto = model.Name,
+                                                                    CantidadProducto = cantidad,
+                                                                    PrecioProducto = model.Price.toString()
+                                                                )
+                                                            )
+
+                                                            Toast.makeText(
+                                                                this@HomeActivity,
+                                                                "Item agregado a la venta",
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
+                                                        }
+
+
+
+
                                                     }
                                                 }
                                                 mDialogView.Cancelar.setOnClickListener {
