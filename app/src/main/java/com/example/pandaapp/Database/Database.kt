@@ -4,8 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteQueryBuilder
 import com.example.pandaapp.Model.DetallePedidos
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper
-
-
+import android.database.DatabaseUtils
 
 var DB_NAME:String="PandaDB.db"
 var DB_Ver:Int=1
@@ -74,20 +73,17 @@ class Database(context: Context?) : SQLiteAssetHelper(context, DB_NAME, null, DB
         db.execSQL(query)
     }
 
-     fun checkItem(nombre:String):Boolean{
+     fun checkItem(nombre:String?):Boolean{
         var db=readableDatabase
-        var query= String.format("SELECT * FROM DETALLEPEDIDOS\n" +
-                "WHERE NombreProducto="+nombre+";")
+         val num = DatabaseUtils.longForQuery(db, "SELECT COUNT(*) FROM DETALLEPEDIDOS WHERE NombreProducto=\"$nombre\";", null).toInt()
 
-        db.execSQL(query)
-        val cursor = db.rawQuery(query, null)
+        return num>0
+    }
 
-        if(cursor.count <= 0){
-            cursor.close()
-            return false
-        }
-        cursor.close()
-        return true
+    fun checkearTabla(): Int {
+        var db=readableDatabase
+        val numRows = DatabaseUtils.longForQuery(db, "SELECT COUNT(*) FROM DETALLEPEDIDOS", null).toInt()
+        return numRows
     }
 
 

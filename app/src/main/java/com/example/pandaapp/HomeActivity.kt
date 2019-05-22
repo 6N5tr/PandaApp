@@ -142,7 +142,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                                     getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                                 inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
 
-
+//1
                                                 mDialogView.Aceptar.setOnClickListener{
                                                     val cantidad = mDialogView.cantidad.text.toString()
                                                     if (cantidad.isEmpty()) {
@@ -156,8 +156,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                                         mAlertDialog.dismiss()
 
                                                         //Agregar comparacion de pedidos.
-
-                                                        if(Database(this@HomeActivity).checkItem(nombre=  model.Name!!.toString())==true){
+                                                        if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
                                                             Toast.makeText(this@HomeActivity,"Item Duplicado", Toast.LENGTH_SHORT).show()
                                                         }
                                                         else{
@@ -176,6 +175,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                                                 Toast.LENGTH_SHORT
                                                             ).show()
                                                         }
+
+
 
 
 
@@ -266,7 +267,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                         val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                         inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
 
-
+//2
                                         mDialogView.Aceptar.setOnClickListener{
                                             val cantidad = mDialogView.cantidad.text.toString()
                                             if (cantidad.isEmpty()) {
@@ -278,20 +279,27 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                                     getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                                 inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
                                                 mAlertDialog.dismiss()
-                                                Database(this@HomeActivity).addToVentas(
-                                                    DetallePedidos(
-                                                        IdProducto = model.Id.toString(),
-                                                        NombreProducto = model.Name,
-                                                        CantidadProducto = cantidad,
-                                                        PrecioProducto = model.Price.toString()
-                                                    )
-                                                )
 
-                                                Toast.makeText(
-                                                    this@HomeActivity,
-                                                    "Item agregado a la venta",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
+                                                //Agregar comparacion de pedidos.
+                                                if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
+                                                    Toast.makeText(this@HomeActivity,"Item Duplicado", Toast.LENGTH_SHORT).show()
+                                                }
+                                                else{
+                                                    Database(this@HomeActivity).addToVentas(
+                                                        DetallePedidos(
+                                                            IdProducto =model.Id.toString(),
+                                                            NombreProducto = model.Name,
+                                                            CantidadProducto = cantidad,
+                                                            PrecioProducto = model.Price.toString()
+                                                        )
+                                                    )
+
+                                                    Toast.makeText(
+                                                        this@HomeActivity,
+                                                        "Item agregado a la venta",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
                                             }
                                         }
                                         mDialogView.Cancelar.setOnClickListener{
@@ -377,7 +385,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                             inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
 
-
+//3
                             mDialogView.Aceptar.setOnClickListener{
                                 val cantidad = mDialogView.cantidad.text.toString()
                                 if (cantidad.isEmpty()) {
@@ -389,20 +397,28 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                         getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                     inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
                                     mAlertDialog.dismiss()
-                                    Database(this@HomeActivity).addToVentas(
-                                        DetallePedidos(
-                                            IdProducto = model.Id.toString(),
-                                            NombreProducto = model.Name,
-                                            CantidadProducto = cantidad,
-                                            PrecioProducto = model.Price.toString()
-                                        )
-                                    )
 
-                                    Toast.makeText(
-                                        this@HomeActivity,
-                                        "Item agregado a la venta",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    //Agregar comparacion de pedidos.
+                                    if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
+                                        Toast.makeText(this@HomeActivity,"Item Duplicado", Toast.LENGTH_SHORT).show()
+                                    }
+                                    else{
+                                        Database(this@HomeActivity).addToVentas(
+                                            DetallePedidos(
+                                                IdProducto =model.Id.toString(),
+                                                NombreProducto = model.Name,
+                                                CantidadProducto = cantidad,
+                                                PrecioProducto = model.Price.toString()
+                                            )
+                                        )
+
+                                        Toast.makeText(
+                                            this@HomeActivity,
+                                            "Item agregado a la venta",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+
                                 }
                             }
                             mDialogView.Cancelar.setOnClickListener{
@@ -532,19 +548,25 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                                 val inputManager: InputMethodManager =
                                                     getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                                 inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+//4
 
+                                            mDialogView.Aceptar.setOnClickListener{
+                                                val cantidad = mDialogView.cantidad.text.toString()
+                                                if (cantidad.isEmpty()) {
+                                                    Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
+                                                }
+                                                else {
 
-                                                mDialogView.Aceptar.setOnClickListener{
-                                                    val cantidad = mDialogView.cantidad.text.toString()
-                                                    if (cantidad.isEmpty()) {
-                                                        Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
+                                                    val inputManager: InputMethodManager =
+                                                        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                                    inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
+                                                    mAlertDialog.dismiss()
+
+                                                    //Agregar comparacion de pedidos.
+                                                    if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
+                                                        Toast.makeText(this@HomeActivity,"Item Duplicado", Toast.LENGTH_SHORT).show()
                                                     }
-                                                    else {
-
-                                                        val inputManager: InputMethodManager =
-                                                            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                                                        inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
-                                                        mAlertDialog.dismiss()
+                                                    else{
                                                         Database(this@HomeActivity).addToVentas(
                                                             DetallePedidos(
                                                                 IdProducto =model.Id.toString(),
@@ -560,6 +582,10 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                                             Toast.LENGTH_SHORT
                                                         ).show()
                                                     }
+
+
+
+                                                }
                                                 }
                                                 mDialogView.Cancelar.setOnClickListener {
                                                     val inputManager: InputMethodManager =
@@ -634,11 +660,11 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                             val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                             inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
-
+//5
                             mDialogView.Aceptar.setOnClickListener{
                                 val cantidad = mDialogView.cantidad.text.toString()
                                 if (cantidad.isEmpty()) {
-                                                 Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
                                 }
                                 else {
 
@@ -646,20 +672,28 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                         getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                     inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
                                     mAlertDialog.dismiss()
-                                    Database(this@HomeActivity).addToVentas(
-                                        DetallePedidos(
-                                            IdProducto = model.Id.toString(),
-                                            NombreProducto = model.Name,
-                                            CantidadProducto = cantidad,
-                                            PrecioProducto = model.Price.toString()
-                                        )
-                                    )
 
-                                    Toast.makeText(
-                                        this@HomeActivity,
-                                        "Item agregado a la venta",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    //Agregar comparacion de pedidos.
+                                    if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
+                                        Toast.makeText(this@HomeActivity,"Item Duplicado", Toast.LENGTH_SHORT).show()
+                                    }
+                                    else{
+                                        Database(this@HomeActivity).addToVentas(
+                                            DetallePedidos(
+                                                IdProducto =model.Id.toString(),
+                                                NombreProducto = model.Name,
+                                                CantidadProducto = cantidad,
+                                                PrecioProducto = model.Price.toString()
+                                            )
+                                        )
+
+                                        Toast.makeText(
+                                            this@HomeActivity,
+                                            "Item agregado a la venta",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+
                                 }
                             }
                             mDialogView.Cancelar.setOnClickListener{
