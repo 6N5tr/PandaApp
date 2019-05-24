@@ -55,20 +55,7 @@
                     android:layout_below="@+id/linea"
                     android:weightSum="2">
 
-            <Button
-                    android:id="@+id/btnVentaRealizada"
-                    android:text="Finalizar Venta"
-                    android:textColor="@android:color/white"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/botonesinicio"
-                    android:layout_weight="1"
-                    android:layout_marginTop="10dp" android:layout_marginStart="8dp" android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"/>
-            <Button
+                <Button
                     android:id="@+id/btnCancelarVenta"
                     android:layout_weight="1"
                     android:text="Cancelar Venta"
@@ -81,7 +68,19 @@
                     android:background="@color/botonesinicio"
                     android:layout_marginTop="10dp" android:layout_marginStart="8dp" android:layout_marginEnd="8dp"
                     android:layout_marginBottom="8dp"/>
-
+                <Button
+                        android:id="@+id/btnVentaRealizada"
+                        android:text="Finalizar Venta"
+                        android:textColor="@android:color/white"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/botonesinicio"
+                        android:layout_weight="1"
+                        android:layout_marginTop="10dp" android:layout_marginStart="8dp" android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="8dp"/>
 
 
             </LinearLayout>

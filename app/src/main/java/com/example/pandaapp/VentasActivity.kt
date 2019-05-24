@@ -1,11 +1,9 @@
 package com.example.pandaapp
 
-import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.view.GravityCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -21,17 +19,14 @@ import com.example.pandaapp.Database.Database
 import com.example.pandaapp.Model.DetallePedidos
 import com.example.pandaapp.Model.Request
 import com.example.pandaapp.ViewHolder.VentasAdapter
-import com.example.pandaapp.ViewHolder.VentasViewHolder
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_ventas.*
 import kotlinx.android.synthetic.main.cantidad_dialog.view.*
 import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.util.*
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.widget.SimpleAdapter
 import com.example.pandaapp.Swipe.SwipeToDeleteCallback
 
 
@@ -112,6 +107,7 @@ class VentasActivity : AppCompatActivity() {
                 // Display a negative button on alert dialog
                 builder.setNegativeButton("Cancelar"){dialog,which ->
                     builder.show().dismiss()
+                    Toast.makeText(applicationContext,"Venta Cancelada!",Toast.LENGTH_SHORT).show()
                 }
 
 
@@ -164,6 +160,7 @@ class VentasActivity : AppCompatActivity() {
             // Display a negative button on alert dialog
             builder.setNegativeButton("Cancelar"){dialog,which ->
                 builder.show().dismiss()
+                Toast.makeText(applicationContext,"No se ha cancelado la venta!",Toast.LENGTH_SHORT).show()
             }
 
 
@@ -224,7 +221,7 @@ class VentasActivity : AppCompatActivity() {
 
 
             mDialogView.Aceptar.setOnClickListener{
-                val cantidad = mDialogView.cantidad.text.toString()
+                val cantidad = mDialogView.inputcantidad.text.toString()
                 if (cantidad.isEmpty()) {
                     Toast.makeText(this@VentasActivity,"Agregue la nueva cantidad", Toast.LENGTH_SHORT).show()
                 }

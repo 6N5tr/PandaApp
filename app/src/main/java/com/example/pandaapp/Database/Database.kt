@@ -80,12 +80,15 @@ class Database(context: Context?) : SQLiteAssetHelper(context, DB_NAME, null, DB
         return num>0
     }
 
-    fun checkearTabla(): Int {
+    fun checkId(nombre:String?):Int{
         var db=readableDatabase
-        val numRows = DatabaseUtils.longForQuery(db, "SELECT COUNT(*) FROM DETALLEPEDIDOS", null).toInt()
-        return numRows
+        val num = DatabaseUtils.longForQuery(db, "SELECT IdProducto FROM DETALLEPEDIDOS WHERE NombreProducto=\"$nombre\";", null).toInt()
+        return num
     }
-
-
+    fun getCant(nombre:String?):Int{
+        var db=readableDatabase
+        val num = DatabaseUtils.longForQuery(db, "SELECT CantidadProducto FROM DETALLEPEDIDOS WHERE NombreProducto=\"$nombre\";", null).toInt()
+        return num
+    }
 }
 

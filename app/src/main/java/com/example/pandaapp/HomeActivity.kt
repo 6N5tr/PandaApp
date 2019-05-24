@@ -10,10 +10,12 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.AlertDialogLayout
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
@@ -23,7 +25,6 @@ import com.example.pandaapp.Class.Estructura
 import com.example.pandaapp.Class.notification
 import com.example.pandaapp.Comun.Comun
 import com.example.pandaapp.Database.Database
-import com.example.pandaapp.Messaging.eltak
 import com.example.pandaapp.Model.DetallePedidos
 import com.example.pandaapp.Model.Vista
 import com.example.pandaapp.ViewHolder.MenuViewHolder
@@ -40,6 +41,7 @@ import com.mancj.materialsearchbar.MaterialSearchBar
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_home.*
+import kotlinx.android.synthetic.main.cantidad_dialog.*
 import kotlinx.android.synthetic.main.cantidad_dialog.view.*
 import kotlinx.android.synthetic.main.content_home.*
 import java.util.*
@@ -49,6 +51,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var database = FirebaseDatabase.getInstance()
     var ref = database.getReference("Views")
 
+    var mVentas: List<DetallePedidos> = ArrayList()
 
     lateinit var mRecyclerView:RecyclerView
 
@@ -108,12 +111,14 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         val firebaseRecyclerAdapter =
                             object : FirebaseRecyclerAdapter<Vista, MenuViewHolder>(option) {
                                 override fun onCreateViewHolder(p0: ViewGroup, p1: Int): MenuViewHolder {
+
                                     val itemv = LayoutInflater.from(this@HomeActivity)
                                         .inflate(R.layout.menu_item, p0, false)
                                     return MenuViewHolder(itemv)
                                 }
 
                                 override fun onBindViewHolder(holder: MenuViewHolder, position: Int, model: Vista) {
+
                                     val refid = getRef(position).key.toString()
                                     ref.child(refid).addValueEventListener(object : ValueEventListener {
                                         override fun onCancelled(p0: DatabaseError) {
@@ -144,7 +149,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 //1
                                                 mDialogView.Aceptar.setOnClickListener{
-                                                    val cantidad = mDialogView.cantidad.text.toString()
+                                                    val cantidad = mDialogView.inputcantidad.text.toString()
                                                     if (cantidad.isEmpty()) {
                                                         Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
                                                     }
@@ -158,6 +163,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                                         //Agregar comparacion de pedidos.
                                                         if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
                                                             Toast.makeText(this@HomeActivity,"Item Duplicado", Toast.LENGTH_SHORT).show()
+                                                            var IdPro=Database(this@HomeActivity).checkId(model.Name.toString())
+                                                            var cantPro=Database(this@HomeActivity).getCant(model.Name.toString())
+                                                            val cantidad = mDialogView.inputcantidad.text.toString()
+                                                            Database(this@HomeActivity).editVenta(
+                                                                Id= IdPro!!.toInt(),
+                                                                cantidad = (cantidad.toInt()+cantPro).toString()
+                                                            )
                                                         }
                                                         else{
                                                             Database(this@HomeActivity).addToVentas(
@@ -269,7 +281,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 //2
                                         mDialogView.Aceptar.setOnClickListener{
-                                            val cantidad = mDialogView.cantidad.text.toString()
+                                            val cantidad = mDialogView.inputcantidad.text.toString()
                                             if (cantidad.isEmpty()) {
                                                 Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
                                             }
@@ -282,7 +294,16 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                                                 //Agregar comparacion de pedidos.
                                                 if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
-                                                    Toast.makeText(this@HomeActivity,"Item Duplicado", Toast.LENGTH_SHORT).show()
+
+
+                                                                                             Toast.makeText(this@HomeActivity,"Item Duplicado", Toast.LENGTH_SHORT).show()
+                                                    var IdPro=Database(this@HomeActivity).checkId(model.Name.toString())
+                                                    var cantPro=Database(this@HomeActivity).getCant(model.Name.toString())
+                                                    val cantidad = mDialogView.inputcantidad.text.toString()
+                                                    Database(this@HomeActivity).editVenta(
+                                                        Id= IdPro!!.toInt(),
+                                                        cantidad = (cantidad.toInt()+cantPro).toString()
+                                                    )
                                                 }
                                                 else{
                                                     Database(this@HomeActivity).addToVentas(
@@ -349,11 +370,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val firebaseRecyclerAdapter=object :FirebaseRecyclerAdapter<Vista,MenuViewHolder>(option){
             override fun onCreateViewHolder(p0: ViewGroup, p1: Int): MenuViewHolder {
+
                 val itemv=LayoutInflater.from(this@HomeActivity).inflate(R.layout.menu_item,p0,false)
                 return MenuViewHolder(itemv)
             }
 
             override fun onBindViewHolder(holder: MenuViewHolder, position: Int, model: Vista) {
+
                 val refid=getRef(position).key.toString()
                 ref.child(refid).addValueEventListener(object :ValueEventListener{
                     override fun onCancelled(p0: DatabaseError) {
@@ -369,38 +392,41 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                         holder.itemView.setOnClickListener{
 
-                            /*Toast.makeText(this@HomeActivity," "+model.Name+" "+position+" "+model.Price, Toast.LENGTH_SHORT).show()*/
-
-                            /*val intent= Intent(this@HomeActivity,InfoActivity::class.java)
-                            intent.putExtra("FirebaseImagen",model.Photo)
-                            intent.putExtra("FirebaseNombre",model.Name)
-                            startActivity(intent)*/
-
                             val mDialogView=LayoutInflater.from(this@HomeActivity).inflate(R.layout.cantidad_dialog,null)
                             val mBuilder=AlertDialog.Builder(this@HomeActivity)
                                 .setView(mDialogView)
                                 .setTitle("Agregar Cantidad")
+                            val txtFullName=headerView.findViewById<TextView>(R.id.textView)
                             val mAlertDialog=mBuilder.show()
+                            mDialogView.inputcantidad.findFocus()
 
                             val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                             inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
 
 //3
                             mDialogView.Aceptar.setOnClickListener{
-                                val cantidad = mDialogView.cantidad.text.toString()
+                                val cantidad = mDialogView.inputcantidad.text.toString()
                                 if (cantidad.isEmpty()) {
                                     Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
                                 }
                                 else {
 
-                                    val inputManager: InputMethodManager =
-                                        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                    val inputManager: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                     inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
                                     mAlertDialog.dismiss()
 
                                     //Agregar comparacion de pedidos.
                                     if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
                                         Toast.makeText(this@HomeActivity,"Item Duplicado", Toast.LENGTH_SHORT).show()
+                                        var IdPro=Database(this@HomeActivity).checkId(model.Name.toString())
+                                        var cantPro=Database(this@HomeActivity).getCant(model.Name.toString())
+                                        val cantidad = mDialogView.inputcantidad.text.toString()
+                                        Database(this@HomeActivity).editVenta(
+                                            Id= IdPro!!.toInt(),
+                                            cantidad = (cantidad.toInt()+cantPro).toString()
+                                        )
+
+
                                     }
                                     else{
                                         Database(this@HomeActivity).addToVentas(
@@ -512,6 +538,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         val option = FirebaseRecyclerOptions.Builder<Vista>()
                             .setQuery(database.getReference("Views").orderByChild("Codebar").equalTo(codebar.toString()),Vista::class.java)
                             .build()
+
                         val firebaseRecyclerAdapter =
                             object : FirebaseRecyclerAdapter<Vista, MenuViewHolder>(option) {
                                 override fun onCreateViewHolder(p0: ViewGroup, p1: Int): MenuViewHolder {
@@ -538,20 +565,18 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                                             holder.itemView.setOnClickListener {
 
-                                                val mDialogView = LayoutInflater.from(this@HomeActivity)
-                                                    .inflate(R.layout.cantidad_dialog, null)
-                                                val mBuilder = AlertDialog.Builder(this@HomeActivity)
+                                                val mDialogView=LayoutInflater.from(this@HomeActivity).inflate(R.layout.cantidad_dialog,null)
+                                                val mBuilder=AlertDialog.Builder(this@HomeActivity)
                                                     .setView(mDialogView)
                                                     .setTitle("Agregar Cantidad")
-                                                val mAlertDialog = mBuilder.show()
+                                                val mAlertDialog=mBuilder.show()
 
-                                                val inputManager: InputMethodManager =
-                                                    getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                                                inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+                                                val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                                inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
 //4
 
                                             mDialogView.Aceptar.setOnClickListener{
-                                                val cantidad = mDialogView.cantidad.text.toString()
+                                                val cantidad = mDialogView.inputcantidad.text.toString()
                                                 if (cantidad.isEmpty()) {
                                                     Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
                                                 }
@@ -565,6 +590,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                                     //Agregar comparacion de pedidos.
                                                     if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
                                                         Toast.makeText(this@HomeActivity,"Item Duplicado", Toast.LENGTH_SHORT).show()
+                                                        var IdPro=Database(this@HomeActivity).checkId(model.Name.toString())
+                                                        var cantPro=Database(this@HomeActivity).getCant(model.Name.toString())
+                                                        val cantidad = mDialogView.inputcantidad.text.toString()
+                                                        Database(this@HomeActivity).editVenta(
+                                                            Id= IdPro!!.toInt(),
+                                                            cantidad = (cantidad.toInt()+cantPro).toString()
+                                                        )
                                                     }
                                                     else{
                                                         Database(this@HomeActivity).addToVentas(
@@ -662,7 +694,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
 //5
                             mDialogView.Aceptar.setOnClickListener{
-                                val cantidad = mDialogView.cantidad.text.toString()
+                                val cantidad = mDialogView.inputcantidad.text.toString()
                                 if (cantidad.isEmpty()) {
                                     Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
                                 }
@@ -676,6 +708,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                     //Agregar comparacion de pedidos.
                                     if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
                                         Toast.makeText(this@HomeActivity,"Item Duplicado", Toast.LENGTH_SHORT).show()
+                                        var IdPro=Database(this@HomeActivity).checkId(model.Name.toString())
+                                        var cantPro=Database(this@HomeActivity).getCant(model.Name.toString())
+                                        val cantidad = mDialogView.inputcantidad.text.toString()
+                                        Database(this@HomeActivity).editVenta(
+                                            Id= IdPro!!.toInt(),
+                                            cantidad = (cantidad.toInt()+cantPro).toString()
+                                        )
                                     }
                                     else{
                                         Database(this@HomeActivity).addToVentas(
