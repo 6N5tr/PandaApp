@@ -57,6 +57,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     lateinit var show_progress:ProgressBar
 
+
    //Cargar Datos en Lista de Sugerencias
     var sugerenciasLista= ArrayList<String>()
     var mSearchBar:MaterialSearchBar?=null
@@ -96,6 +97,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
+
+
                 if (searchBar.text.isEmpty()) {
 
                 }
@@ -103,10 +106,14 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     val option = FirebaseRecyclerOptions.Builder<Vista>()
                         .setQuery(
                             database.getReference("Views").orderByChild("Name").startAt(searchBar.text.first().toString().toUpperCase()+searchBar.text.toString().substring(1,searchBar.text.length))
-                                .endAt(searchBar.text.toString().substring(1,searchBar.text.length)+"\uf8ff"),
-                            Vista::class.java
+                                .endAt(searchBar.text.substring(1,searchBar.text.length)+"\uf8ff"),Vista::class.java
                         )
                         .build()
+
+                    Log.d( "TAG",    "Objeto "   )
+
+
+
 
                         val firebaseRecyclerAdapter =
                             object : FirebaseRecyclerAdapter<Vista, MenuViewHolder>(option) {
@@ -162,7 +169,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                                                         //Agregar comparacion de pedidos.
                                                         if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
-                                                            Toast.makeText(this@HomeActivity,"Item Duplicado", Toast.LENGTH_SHORT).show()
                                                             var IdPro=Database(this@HomeActivity).checkId(model.Name.toString())
                                                             var cantPro=Database(this@HomeActivity).getCant(model.Name.toString())
                                                             val cantidad = mDialogView.inputcantidad.text.toString()
@@ -170,6 +176,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                                                 Id= IdPro!!.toInt(),
                                                                 cantidad = (cantidad.toInt()+cantPro).toString()
                                                             )
+                                                            //Mensaje que se muestra cuando un producto ya esta agragado a las ventas y se desea agregar o modicar el valor de la cantida de este
+                                                            Toast.makeText(this@HomeActivity,""+model.Name.toString()+" Cantidad Total: "+(cantidad.toInt()+cantPro).toString(), Toast.LENGTH_SHORT).show()
                                                         }
                                                         else{
                                                             Database(this@HomeActivity).addToVentas(
@@ -294,9 +302,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                                                 //Agregar comparacion de pedidos.
                                                 if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
-
-
-                                                                                             Toast.makeText(this@HomeActivity,"Item Duplicado", Toast.LENGTH_SHORT).show()
                                                     var IdPro=Database(this@HomeActivity).checkId(model.Name.toString())
                                                     var cantPro=Database(this@HomeActivity).getCant(model.Name.toString())
                                                     val cantidad = mDialogView.inputcantidad.text.toString()
@@ -304,6 +309,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                                         Id= IdPro!!.toInt(),
                                                         cantidad = (cantidad.toInt()+cantPro).toString()
                                                     )
+                                                    //Mensaje que se muestra cuando un producto ya esta agragado a las ventas y se desea agregar o modicar el valor de la cantida de este
+                                                    Toast.makeText(this@HomeActivity,""+model.Name.toString()+" Cantidad Total: "+(cantidad.toInt()+cantPro).toString(), Toast.LENGTH_SHORT).show()
                                                 }
                                                 else{
                                                     Database(this@HomeActivity).addToVentas(
@@ -417,7 +424,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                                     //Agregar comparacion de pedidos.
                                     if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
-                                        Toast.makeText(this@HomeActivity,"Item Duplicado", Toast.LENGTH_SHORT).show()
                                         var IdPro=Database(this@HomeActivity).checkId(model.Name.toString())
                                         var cantPro=Database(this@HomeActivity).getCant(model.Name.toString())
                                         val cantidad = mDialogView.inputcantidad.text.toString()
@@ -425,8 +431,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                             Id= IdPro!!.toInt(),
                                             cantidad = (cantidad.toInt()+cantPro).toString()
                                         )
-
-
+                                        //Mensaje que se muestra cuando un producto ya esta agragado a las ventas y se desea agregar o modicar el valor de la cantida de este
+                                        Toast.makeText(this@HomeActivity,""+model.Name.toString()+" Cantidad Total: "+(cantidad.toInt()+cantPro).toString(), Toast.LENGTH_SHORT).show()
                                     }
                                     else{
                                         Database(this@HomeActivity).addToVentas(
@@ -589,7 +595,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                                                     //Agregar comparacion de pedidos.
                                                     if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
-                                                        Toast.makeText(this@HomeActivity,"Item Duplicado", Toast.LENGTH_SHORT).show()
                                                         var IdPro=Database(this@HomeActivity).checkId(model.Name.toString())
                                                         var cantPro=Database(this@HomeActivity).getCant(model.Name.toString())
                                                         val cantidad = mDialogView.inputcantidad.text.toString()
@@ -597,6 +602,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                                             Id= IdPro!!.toInt(),
                                                             cantidad = (cantidad.toInt()+cantPro).toString()
                                                         )
+                                                        //Mensaje que se muestra cuando un producto ya esta agragado a las ventas y se desea agregar o modicar el valor de la cantida de este
+                                                        Toast.makeText(this@HomeActivity,""+model.Name.toString()+" Cantidad Total: "+(cantidad.toInt()+cantPro).toString(), Toast.LENGTH_SHORT).show()
                                                     }
                                                     else{
                                                         Database(this@HomeActivity).addToVentas(
@@ -707,7 +714,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                                     //Agregar comparacion de pedidos.
                                     if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
-                                        Toast.makeText(this@HomeActivity,"Item Duplicado", Toast.LENGTH_SHORT).show()
+
                                         var IdPro=Database(this@HomeActivity).checkId(model.Name.toString())
                                         var cantPro=Database(this@HomeActivity).getCant(model.Name.toString())
                                         val cantidad = mDialogView.inputcantidad.text.toString()
@@ -715,6 +722,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                             Id= IdPro!!.toInt(),
                                             cantidad = (cantidad.toInt()+cantPro).toString()
                                         )
+                                        //Mensaje que se muestra cuando un producto ya esta agragado a las ventas y se desea agregar o modicar el valor de la cantida de este
+                                        Toast.makeText(this@HomeActivity,""+model.Name.toString()+" Cantidad Total: "+(cantidad.toInt()+cantPro).toString(), Toast.LENGTH_SHORT).show()
                                     }
                                     else{
                                         Database(this@HomeActivity).addToVentas(
@@ -811,11 +820,15 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_menu -> {
+            R.id.nav_Ingresos -> {
 
 
             }
-            R.id.nav_ventas -> {
+            R.id.nav_Reportes-> {
+
+
+            }
+            R.id.nav_Observaciones -> {
                 val post= Estructura(
                     "eRl36Bv4DFc:APA91bGACko4g3ikV3TVldBpDqA_SE5YTNQLhKHJ2gm0wxAZ90vzmwmipIG6Q3uEILpzxnEPnB6LQgJvnKiaYS3WCLbpfhvfU01bZ970pQGTSO4CHPOerUgvTiK7B3ndXtPoNrkUudVX",
                     notification(title = "hola",body = "chao")
@@ -824,17 +837,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 "https://fcm.googleapis.com/fcm/send".httpPost()
                     .header(
-                    "Content-Type" to "application/json",
-                    "Authorization" to "key=AAAAipzqo8Q:APA91bFj6kxPPulVslLckgeEVbw-yoy_rrH27uXR3kMQrBvt94SC2d-fCbZJJcKSmujH-9GwHJPyCAao6L8clpA5W8-nPjrLm4yK2CnLJZJw3qrFdQGLWd5_dq7hzp3fVF82WWUhMvKy")
+                        "Content-Type" to "application/json",
+                        "Authorization" to "key=AAAAipzqo8Q:APA91bFj6kxPPulVslLckgeEVbw-yoy_rrH27uXR3kMQrBvt94SC2d-fCbZJJcKSmujH-9GwHJPyCAao6L8clpA5W8-nPjrLm4yK2CnLJZJw3qrFdQGLWd5_dq7hzp3fVF82WWUhMvKy")
                     .body(postJson.toString()).response { req, res, result ->
-                    Toast.makeText(this@HomeActivity,"Mensaje Enviado", Toast.LENGTH_SHORT).show()
-                }
-
+                        Toast.makeText(this@HomeActivity,"Mensaje Enviado", Toast.LENGTH_SHORT).show()
+                    }
             }
-            R.id.nav_productos -> {
-
-            }
-            R.id.nav_salir -> {
+            R.id.nav_Salir -> {
 
             }
 

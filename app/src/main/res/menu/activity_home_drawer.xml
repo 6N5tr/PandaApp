@@ -5,22 +5,22 @@
 
     <group android:checkableBehavior="single">
         <item
-                android:id="@+id/nav_menu"
+                android:id="@+id/nav_Ingresos"
                 android:icon="@drawable/ic_chrome_reader_mode_black_24dp"
                 android:iconTint="@android:color/white"
-                android:title="Menu"/>
+                android:title="Ingresos"/>
         <item
-                android:id="@+id/nav_ventas"
+                android:id="@+id/nav_Reportes"
                 android:icon="@drawable/ic_shopping_basket_black_24dp"
                 android:iconTint="@android:color/white"
-                android:title="Ventas"/>
+                android:title="Reportes"/>
         <item
-                android:id="@+id/nav_productos"
+                android:id="@+id/nav_Observaciones"
                 android:icon="@drawable/ic_featured_play_list_black_24dp"
                 android:iconTint="@android:color/white"
-                android:title="Productos"/>
+                android:title="Observaciones"/>
         <item
-                android:id="@+id/nav_salir"
+                android:id="@+id/nav_Salir"
                 android:icon="@drawable/ic_exit_to_app_black_24dp"
                 android:iconTint="@android:color/white"
                 android:title="Salir"/>
