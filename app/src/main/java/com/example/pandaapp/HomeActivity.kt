@@ -51,10 +51,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var database = FirebaseDatabase.getInstance()
     var ref = database.getReference("Views")
 
-    var mVentas: List<DetallePedidos> = ArrayList()
-
     lateinit var mRecyclerView:RecyclerView
-
     lateinit var show_progress:ProgressBar
 
 
@@ -109,11 +106,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 .endAt(searchBar.text.substring(1,searchBar.text.length)+"\uf8ff"),Vista::class.java
                         )
                         .build()
-
-                    Log.d( "TAG",    "Objeto "   )
-
-
-
 
                         val firebaseRecyclerAdapter =
                             object : FirebaseRecyclerAdapter<Vista, MenuViewHolder>(option) {
@@ -821,7 +813,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_Ingresos -> {
-
+                val intento = Intent(this@HomeActivity,IngresosActivity::class.java)
+                startActivity(intento)
 
             }
             R.id.nav_Reportes-> {

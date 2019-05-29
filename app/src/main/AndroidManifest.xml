@@ -14,8 +14,10 @@
             android:roundIcon="@mipmap/ic_panda_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-
-
+        <activity android:name=".IngresosActivity">
+        </activity>
+        <activity android:name=".Main2Activity">
+        </activity>
         <activity android:name=".VentasActivity">
         </activity>
         <activity
@@ -35,17 +37,18 @@
 
         <service android:name=".Messaging.MyFirebaseInstanceService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
         <service android:name=".Messaging.MyFirebaseInstanceIdService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
+
         <meta-data
                 android:name="com.google.android.gms.version"
-                android:value="@integer/google_play_services_version" />
+                android:value="@integer/google_play_services_version"/>
     </application>
 
 </manifest>
