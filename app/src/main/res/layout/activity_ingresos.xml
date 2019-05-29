@@ -83,29 +83,5 @@
     </LinearLayout>
 
 
-    <LinearLayout
-            android:orientation="horizontal"
-            android:layout_alignParentBottom="true"
-            android:weightSum="2"
-            android:layout_width="match_parent"
-            android:layout_height="100dp">
-
-        <Button
-                android:id="@+id/btnBuscar"
-                android:text="Buscar"
-                android:textColor="@android:color/white"
-                android:layout_marginRight="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_alignParentBottom="true"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/botonesinicio"
-                android:layout_marginTop="20dp" android:layout_marginStart="8dp" android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"/>
-
-
-
-
-    </LinearLayout>
 
 </RelativeLayout>

@@ -2,14 +2,11 @@ package com.example.pandaapp.Model
 
 class Producto{
     var Name:String?=null
-    var Price:Double?=null
 
+    constructor():this("")
 
-    constructor():this("",0.0)
-
-    constructor(Name: String?, Price: Double?) {
+    constructor(Name: String?) {
         this.Name = Name
-        this.Price = Price
     }
 
 
