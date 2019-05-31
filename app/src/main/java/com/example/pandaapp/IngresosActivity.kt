@@ -1,6 +1,7 @@
 package com.example.pandaapp
 
 import android.content.Context
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -29,6 +30,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.mancj.materialsearchbar.MaterialSearchBar
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_ingresos.*
 import kotlinx.android.synthetic.main.cantidad_dialog.view.*
 import kotlinx.android.synthetic.main.content_home.*
@@ -48,6 +50,7 @@ class IngresosActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ingresos)
+
 
         mRecyclerView=findViewById(R.id.recycler_producto)
         mRecyclerView.layoutManager= GridLayoutManager(this,1)
@@ -76,59 +79,32 @@ class IngresosActivity : AppCompatActivity() {
 
                             holder.mNombre.text = " "+model.Name
 
-                          /*  holder.itemView.setOnClickListener{
+                            holder.itemView.setOnClickListener{
 
-                                val mDialogView=LayoutInflater.from(this@HomeActivity).inflate(R.layout.cantidad_dialog,null)
-                                val mBuilder= AlertDialog.Builder(this@HomeActivity)
+                                val mDialogView=LayoutInflater.from(this@IngresosActivity).inflate(R.layout.cantidadproducto_dialog,null)
+                                val mBuilder= AlertDialog.Builder(this@IngresosActivity)
                                     .setView(mDialogView)
                                     .setTitle("Agregar Cantidad")
-                                val txtFullName=headerView.findViewById<TextView>(R.id.textView)
+
                                 val mAlertDialog=mBuilder.show()
                                 mDialogView.inputcantidad.findFocus()
 
                                 val inputManager: InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                 inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
 
-//3
+
                                 mDialogView.Aceptar.setOnClickListener{
                                     val cantidad = mDialogView.inputcantidad.text.toString()
                                     if (cantidad.isEmpty()) {
-                                        Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(this@IngresosActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
                                     }
                                     else {
 
                                         val inputManager: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                         inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
                                         mAlertDialog.dismiss()
+                                        ref.child("Views").child(model.Name.toString()).child("Quantity").setValue(cantidad)
 
-                                        //Agregar comparacion de pedidos.
-                                        if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
-                                            var IdPro= Database(this@HomeActivity).checkId(model.Name.toString())
-                                            var cantPro= Database(this@HomeActivity).getCant(model.Name.toString())
-                                            val cantidad = mDialogView.inputcantidad.text.toString()
-                                            Database(this@HomeActivity).editVenta(
-                                                Id= IdPro!!.toInt(),
-                                                cantidad = (cantidad.toInt()+cantPro).toString()
-                                            )
-                                            //Mensaje que se muestra cuando un producto ya esta agragado a las ventas y se desea agregar o modicar el valor de la cantida de este
-                                            Toast.makeText(this@HomeActivity,""+model.Name.toString()+" Cantidad Total: "+(cantidad.toInt()+cantPro).toString(), Toast.LENGTH_SHORT).show()
-                                        }
-                                        else{
-                                            Database(this@HomeActivity).addToVentas(
-                                                DetallePedidos(
-                                                    IdProducto =model.Id.toString(),
-                                                    NombreProducto = model.Name,
-                                                    CantidadProducto = cantidad,
-                                                    PrecioProducto = model.Price.toString()
-                                                )
-                                            )
-
-                                            Toast.makeText(
-                                                this@HomeActivity,
-                                                "Item agregado a la venta",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
 
                                     }
                                 }
@@ -139,7 +115,7 @@ class IngresosActivity : AppCompatActivity() {
 
                                 }
 
-                            }*/
+                            }
 
                         }
 
@@ -193,70 +169,63 @@ class IngresosActivity : AppCompatActivity() {
 
                                         holder.mNombre.text = " "+model.Name
 
-                                        /*  holder.itemView.setOnClickListener{
+                                        holder.itemView.setOnClickListener{
 
-                                              val mDialogView=LayoutInflater.from(this@HomeActivity).inflate(R.layout.cantidad_dialog,null)
-                                              val mBuilder= AlertDialog.Builder(this@HomeActivity)
-                                                  .setView(mDialogView)
-                                                  .setTitle("Agregar Cantidad")
-                                              val txtFullName=headerView.findViewById<TextView>(R.id.textView)
-                                              val mAlertDialog=mBuilder.show()
-                                              mDialogView.inputcantidad.findFocus()
+                                            val mDialogView=LayoutInflater.from(this@IngresosActivity).inflate(R.layout.cantidadproducto_dialog,null)
+                                            val mBuilder= AlertDialog.Builder(this@IngresosActivity)
+                                                .setView(mDialogView)
+                                                .setTitle("Agregar Cantidad")
 
-                                              val inputManager: InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                                              inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
+                                            val mAlertDialog=mBuilder.show()
+                                            mDialogView.inputcantidad.findFocus()
 
-              //3
-                                              mDialogView.Aceptar.setOnClickListener{
-                                                  val cantidad = mDialogView.inputcantidad.text.toString()
-                                                  if (cantidad.isEmpty()) {
-                                                      Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
-                                                  }
-                                                  else {
+                                            val inputManager: InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                            inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
 
-                                                      val inputManager: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                                                      inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
-                                                      mAlertDialog.dismiss()
 
-                                                      //Agregar comparacion de pedidos.
-                                                      if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
-                                                          var IdPro= Database(this@HomeActivity).checkId(model.Name.toString())
-                                                          var cantPro= Database(this@HomeActivity).getCant(model.Name.toString())
-                                                          val cantidad = mDialogView.inputcantidad.text.toString()
-                                                          Database(this@HomeActivity).editVenta(
-                                                              Id= IdPro!!.toInt(),
-                                                              cantidad = (cantidad.toInt()+cantPro).toString()
-                                                          )
-                                                          //Mensaje que se muestra cuando un producto ya esta agragado a las ventas y se desea agregar o modicar el valor de la cantida de este
-                                                          Toast.makeText(this@HomeActivity,""+model.Name.toString()+" Cantidad Total: "+(cantidad.toInt()+cantPro).toString(), Toast.LENGTH_SHORT).show()
-                                                      }
-                                                      else{
-                                                          Database(this@HomeActivity).addToVentas(
-                                                              DetallePedidos(
-                                                                  IdProducto =model.Id.toString(),
-                                                                  NombreProducto = model.Name,
-                                                                  CantidadProducto = cantidad,
-                                                                  PrecioProducto = model.Price.toString()
-                                                              )
-                                                          )
+                                            mDialogView.Aceptar.setOnClickListener{
+                                                val cantidad = mDialogView.inputcantidad.text.toString()
+                                                if (cantidad.isEmpty()) {
+                                                    Toast.makeText(this@IngresosActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
+                                                }
+                                                else {
 
-                                                          Toast.makeText(
-                                                              this@HomeActivity,
-                                                              "Item agregado a la venta",
-                                                              Toast.LENGTH_SHORT
-                                                          ).show()
-                                                      }
+                                                    val inputManager: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                                    inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
+                                                    mAlertDialog.dismiss()
 
-                                                  }
-                                              }
-                                              mDialogView.Cancelar.setOnClickListener{
-                                                  val inputManager: InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                                                  inputManager.hideSoftInputFromWindow(mDialogView.windowToken,0)
-                                                  mAlertDialog.dismiss()
+                                                    ref.child(refid).addValueEventListener(object: ValueEventListener {
+                                                        override fun onCancelled(p0: DatabaseError) {
+                                                        }
 
-                                              }
+                                                        override fun onDataChange(p0: DataSnapshot) {
 
-                                          }*/
+                                                            ref.child(refid.toString()).child("Quantity").setValue(cantidad.toInt())
+
+                                                            var HomeIntent= Intent(this@IngresosActivity,CantidadesActivity::class.java)
+                                                            startActivity(HomeIntent)
+
+                                                            finish()
+
+                                                            Toast.makeText(applicationContext,"Cantidad Agregada!",Toast.LENGTH_SHORT).show()
+
+
+                                                        }
+                                                    })
+
+
+
+
+                                                }
+                                            }
+                                            mDialogView.Cancelar.setOnClickListener{
+                                                val inputManager: InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                                inputManager.hideSoftInputFromWindow(mDialogView.windowToken,0)
+                                                mAlertDialog.dismiss()
+
+                                            }
+
+                                        }
 
                                     }
 

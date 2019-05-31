@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             android:layout_width="match_parent"
+              android:orientation="vertical"
+                                             android:layout_height="match_parent"
+android:padding="10dp">
+
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="Ingrese la cantidad de producto: "
+
+
+    />
+
+    <EditText android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:id="@+id/inputcantidad"
+              android:hint="Cantidad"
+              android:inputType="number"
+    />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:text="Cantidad Existente: "
+
+
+    />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:hint="Valor"
+              android:textSize="30sp"
+              android:textColor="@android:color/black"
+
+    />
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal"
+    android:gravity="center"
+                  android:paddingTop="30dp"
+
+    >
+
+
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:id="@+id/Cancelar"
+                android:text="Cancelar"
+                android:background="@color/botonesinicio"
+                android:layout_marginRight="25dp"
+        />
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:id="@+id/Aceptar"
+                android:text="Aceptar"
+                android:background="@color/secondColor"
+                android:layout_marginLeft="25dp"
+        />
+
+
+    </LinearLayout>
+
+
+</LinearLayout>
