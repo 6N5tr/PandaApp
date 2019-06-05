@@ -12,5 +12,4 @@ class ProductoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     var mNombre:TextView=itemView.findViewById(R.id.producto_name)
 
-
 }
