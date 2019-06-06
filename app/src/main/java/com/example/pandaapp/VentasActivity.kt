@@ -19,20 +19,24 @@ import com.example.pandaapp.Database.Database
 import com.example.pandaapp.Model.DetallePedidos
 import com.example.pandaapp.Model.Request
 import com.example.pandaapp.ViewHolder.VentasAdapter
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_ventas.*
 import kotlinx.android.synthetic.main.cantidad_dialog.view.*
 import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.util.*
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.Log
+import com.example.pandaapp.Model.Producto
 import com.example.pandaapp.Swipe.SwipeToDeleteCallback
+import com.google.firebase.database.*
 
 
 class VentasActivity : AppCompatActivity() {
 
     var evento=0
+
+    var database = FirebaseDatabase.getInstance()
+    var ref = database.getReference("Views")
 
     lateinit var mRecyclerView: RecyclerView
     lateinit var mLayout:RecyclerView.LayoutManager
@@ -93,6 +97,36 @@ class VentasActivity : AppCompatActivity() {
                     mRequest.child(Comun.currentUser+" "+System.currentTimeMillis().toString()).setValue(request)
 
                     Database(baseContext).borrarTodoVentas()
+
+
+                    for (item in mVentas) {
+                        var id=item.IdProducto.toString()
+                        var cantidad=item.CantidadProducto.toString()
+
+
+                        ref.child(id).child("Quantity").addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onCancelled(p0: DatabaseError) {
+                            }
+
+                            override fun onDataChange(p0: DataSnapshot) {
+
+                                var cantidadExistente = p0.value.toString()
+
+                                var valor=cantidadExistente.toInt()-(cantidad.toInt())
+                                ref.child(id).child("Quantity").setValue(valor)
+
+                            }
+                        })
+
+
+                    }
+
+
+                    //Restar cantidades a productos.
+
+
+
+
 
                     var HomeIntent= Intent(this,HomeActivity::class.java)
                     startActivity(HomeIntent)

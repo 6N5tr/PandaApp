@@ -93,7 +93,26 @@ class IngresosActivity : AppCompatActivity() {
                                 val mBuilder= AlertDialog.Builder(this@IngresosActivity)
                                     .setView(mDialogView)
                                     .setTitle("Manejo de Cantidades")
+                                val cantidad=mDialogView.findViewById<TextView>(R.id.valorCantidaProductoExistente)
+                                cantidad.text=" "+model.Quantity
 
+                                val switch=mDialogView.findViewById<Switch>(R.id.switchIngresos)
+
+                                switch.setOnClickListener{
+                                    if(switch.isChecked){
+                                        switch.text="Agregar      "
+
+
+
+
+                                    }
+                                    else{
+
+                                        switch.text="Quitar      "
+
+                                    }
+
+                                }
                                 val mAlertDialog=mBuilder.show()
                                 mDialogView.inputcantidad.findFocus()
 
@@ -103,15 +122,61 @@ class IngresosActivity : AppCompatActivity() {
 
                                 mDialogView.Aceptar.setOnClickListener{
                                     val cantidad = mDialogView.inputcantidad.text.toString()
+                                    var valor: Int? =null
                                     if (cantidad.isEmpty()) {
                                         Toast.makeText(this@IngresosActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
                                     }
                                     else {
 
+                                        if(switch.text=="Agregar        "){
+                                            valor=cantidad.toInt()+ model.Quantity!!
+                                            infoCantidad="true"
+                                            infoCantidad="Cantidad Agregada: "
+                                        }
+                                        else{
+                                            valor=model.Quantity!!-cantidad.toInt()
+                                            infoCantidad="false"
+
+                                            infoCantidad="Cantidad Quitada:     "
+                                        }
+
                                         val inputManager: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                         inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
                                         mAlertDialog.dismiss()
-                                        ref.child("Views").child(model.Name.toString()).child("Quantity").setValue(cantidad)
+
+                                        ref.child(refid).addListenerForSingleValueEvent(object: ValueEventListener {
+                                            override fun onCancelled(p0: DatabaseError) {
+                                            }
+
+                                            override fun onDataChange(p0: DataSnapshot) {
+
+                                                ref.child(refid.toString()).child("Quantity").setValue(valor)
+                                                Toast.makeText(applicationContext,"Cantidad Modificada!",Toast.LENGTH_SHORT).show()
+
+                                                val mDialogView=LayoutInflater.from(this@IngresosActivity).inflate(R.layout.cantidadmuestra_dialog,null)
+                                                val mBuilder= AlertDialog.Builder(this@IngresosActivity)
+                                                    .setView(mDialogView)
+                                                    .setTitle("Cantidades")
+                                                val Quantity=mDialogView.findViewById<TextView>(R.id.cantidadexistente)
+                                                Quantity.text=model.Quantity.toString()
+                                                val Cantidad=mDialogView.findViewById<TextView>(R.id.cantidadagregada)
+                                                Cantidad.text=cantidad
+                                                val Total=mDialogView.findViewById<TextView>(R.id.cantidadtotal)
+                                                Total.text=valor.toString()
+
+                                                val infoStatus=mDialogView.findViewById<TextView>(R.id.textoCantidad)
+                                                infoStatus.text=infoCantidad
+
+                                                val mAlertDialog=mBuilder.show()
+
+                                                mDialogView.btnRegresar.setOnClickListener{
+                                                    mAlertDialog.dismiss()
+                                                }
+
+                                            }
+                                        })
+
+
 
 
                                     }
@@ -262,7 +327,7 @@ class IngresosActivity : AppCompatActivity() {
                                                             mDialogView.btnRegresar.setOnClickListener{
                                                                 mAlertDialog.dismiss()
                                                             }
-                                                            
+
                                                         }
                                                     })
 
@@ -303,4 +368,11 @@ class IngresosActivity : AppCompatActivity() {
 
         })
     }
+
+    override fun onBackPressed() {
+        var HomeIntent= Intent(this,HomeActivity::class.java)
+        startActivity(HomeIntent)
+        finish()
+    }
+
 }
