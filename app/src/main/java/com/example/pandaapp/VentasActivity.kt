@@ -29,6 +29,9 @@ import android.util.Log
 import com.example.pandaapp.Model.Producto
 import com.example.pandaapp.Swipe.SwipeToDeleteCallback
 import com.google.firebase.database.*
+import android.text.Editable
+
+
 
 
 class VentasActivity : AppCompatActivity() {
@@ -302,5 +305,17 @@ class VentasActivity : AppCompatActivity() {
         var frmt= NumberFormat.getCurrencyInstance(local)
         mTextTotal.text = frmt.format(total)
 
+    }
+    fun afterTextChanged(s: Editable?) {
+        var doubleValue = 0.0
+        if (s != null) {
+            try {
+                doubleValue = java.lang.Double.parseDouble(s.toString().replace(',', '.'))
+            } catch (e: NumberFormatException) {
+                //Error
+            }
+
+        }
+        //Do something with doubleValue
     }
 }

@@ -27,6 +27,7 @@ import com.example.pandaapp.Comun.Comun
 import com.example.pandaapp.Database.Database
 import com.example.pandaapp.Model.DetallePedidos
 import com.example.pandaapp.Model.Vista
+import com.example.pandaapp.ViewHolder.InlineScanActivity
 import com.example.pandaapp.ViewHolder.MenuViewHolder
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -37,6 +38,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.zxing.integration.android.IntentIntegrator
+import com.google.zxing.integration.android.IntentResult
 import com.mancj.materialsearchbar.MaterialSearchBar
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_home.*
@@ -62,6 +64,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     //SPEECH
     private val REQUEST_CODE_SPEECH_INPUT=100
 
+    private val Code=1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -489,12 +492,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun getCodebar() {
+        /*var CodebarIntent=Intent(this,InlineScanActivity::class.java)
+        startActivity(CodebarIntent)*/
 
-        val scanner=IntentIntegrator(this)
-        scanner.initiateScan()
+        val intent = Intent(this, InlineScanActivity::class.java)
+        startActivityForResult(intent, Code)
+
     }
-
-
 
     private fun speak() {
         val mIntent=Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -526,13 +530,14 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when(resultCode){
             Activity.RESULT_OK->{
                 Toast.makeText(this, "Codigo Obtenido", Toast.LENGTH_LONG).show()
+                val name = data?.getStringExtra(InlineScanActivity.Code)
                 val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-                if (result != null) {
-                    if (result.contents == null) {
+                if (name != null) {
+                    if (name.equals("")) {
                         Toast.makeText(this, "Escaneo Terminado!", Toast.LENGTH_LONG).show()
                     } else {
 
-                        var codebar= result.contents
+                        var codebar= name
                         val option = FirebaseRecyclerOptions.Builder<Vista>()
                             .setQuery(database.getReference("Views").orderByChild("Codebar").equalTo(codebar.toString()),Vista::class.java)
                             .build()

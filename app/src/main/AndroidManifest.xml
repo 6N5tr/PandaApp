@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <application
             android:allowBackup="true"
             android:hardwareAccelerated="true"
@@ -14,11 +15,11 @@
             android:roundIcon="@mipmap/ic_panda_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
+        <activity android:name=".ViewHolder.InlineScanActivity">
+        </activity>
         <activity android:name=".CantidadesActivity">
         </activity>
         <activity android:name=".IngresosActivity">
-        </activity>
-        <activity android:name=".Main2Activity">
         </activity>
         <activity android:name=".VentasActivity">
         </activity>
