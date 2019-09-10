@@ -77,7 +77,7 @@ class VentasActivity : AppCompatActivity() {
 
         mFechayHora= LocalDateTime.now().toString()
 
-        CargarTotalVentas()
+          CargarTotalVentas()
 
 
         btnVentaRealizada.setOnClickListener{

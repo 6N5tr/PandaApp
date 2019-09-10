@@ -92,7 +92,7 @@ class IngresosActivity : AppCompatActivity() {
                                 val mDialogView=LayoutInflater.from(this@IngresosActivity).inflate(R.layout.cantidadproducto_dialog,null)
                                 val mBuilder= AlertDialog.Builder(this@IngresosActivity)
                                     .setView(mDialogView)
-                                    .setTitle("Manejo de Cantidades")
+                                    .setTitle(" "+model.Name)
                                 val cantidad=mDialogView.findViewById<TextView>(R.id.valorCantidaProductoExistente)
                                 cantidad.text=" "+model.Quantity
 
@@ -247,7 +247,7 @@ class IngresosActivity : AppCompatActivity() {
                                             val mDialogView=LayoutInflater.from(this@IngresosActivity).inflate(R.layout.cantidadproducto_dialog,null)
                                             val mBuilder= AlertDialog.Builder(this@IngresosActivity)
                                                 .setView(mDialogView)
-                                                .setTitle("Manejo de Cantidades")
+                                                .setTitle(" "+model.Name)
                                                 val cantidad=mDialogView.findViewById<TextView>(R.id.valorCantidaProductoExistente)
                                                 cantidad.text=" "+model.Quantity
 

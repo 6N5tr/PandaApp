@@ -1,6 +1,7 @@
 package com.example.pandaapp
 
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -42,10 +43,14 @@ import com.google.zxing.integration.android.IntentResult
 import com.mancj.materialsearchbar.MaterialSearchBar
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_home.*
 import kotlinx.android.synthetic.main.cantidad_dialog.*
 import kotlinx.android.synthetic.main.cantidad_dialog.view.*
+import kotlinx.android.synthetic.main.cantidad_dialog.view.Aceptar
+import kotlinx.android.synthetic.main.cantidad_dialog.view.Cancelar
 import kotlinx.android.synthetic.main.content_home.*
+import kotlinx.android.synthetic.main.loginingresos_dialog.view.*
 import java.util.*
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -55,7 +60,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     lateinit var mRecyclerView:RecyclerView
     lateinit var show_progress:ProgressBar
-
+    var position =0
 
    //Cargar Datos en Lista de Sugerencias
     var sugerenciasLista= ArrayList<String>()
@@ -818,8 +823,95 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_Ingresos -> {
-                val intento = Intent(this@HomeActivity,IngresosActivity::class.java)
-                startActivity(intento)
+
+                //Aqui contraseña y uso
+
+                val mDialogView=LayoutInflater.from(this@HomeActivity).inflate(R.layout.loginingresos_dialog,null)
+                val mBuilder=AlertDialog.Builder(this@HomeActivity)
+                    .setView(mDialogView)
+                    .setTitle("Seguridad")
+                val mAlertDialog=mBuilder.show()
+
+                val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
+//5
+                mDialogView.Aceptar.setOnClickListener{
+                    val user = mDialogView.usuario.text.toString()
+                    val contr=mDialogView.contraseña.text.toString()
+                    if ( user.isEmpty()) {
+                        Toast.makeText(this@HomeActivity,"Digite su usuario", Toast.LENGTH_SHORT).show()
+                    }
+                    else if(contr.isEmpty()){
+                        Toast.makeText(this@HomeActivity,"Digite su contraseña", Toast.LENGTH_SHORT).show()
+                    }
+                    else {
+                        var ref1 = database.getReference("User")
+                        var position =0
+
+
+                        val pD= ProgressDialog(this@HomeActivity)
+                        pD.setMessage("Espere porfavor...")
+                        pD.show()
+
+                        ref1.addValueEventListener(object : ValueEventListener {
+                            override fun onCancelled(p0: DatabaseError) {
+
+                            }
+
+                            override fun onDataChange(p0: DataSnapshot) {
+
+                                for ( i in 1.rangeTo(p0.childrenCount)){
+
+
+                                    val valor=p0.child(i.toString()).child("Name").value.toString()
+
+                                    if(valor.equals("Eve")){
+                                        position=i.toInt()
+                                        break
+                                    }
+
+                                }
+
+                                //if(p0.child(position.toString()).exists()){}
+                                if(contr.equals(p0.child(position.toString()).child("Pass").value.toString())){
+                                    Toast.makeText(this@HomeActivity,"Ingreso Valido", Toast.LENGTH_SHORT).show()
+                                    pD.dismiss()
+                                    Comun.currentUser=p0.child(position.toString()).child("Name").value.toString()
+                                    val intento = Intent(this@HomeActivity,IngresosActivity::class.java)
+                                    startActivity(intento)
+                                    val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                    inputManager.hideSoftInputFromWindow(mDialogView.windowToken,0)
+                                    mAlertDialog.dismiss()
+                                    position=0
+                                    finish()
+                                }else{
+                                    Toast.makeText(this@HomeActivity,"Contraseña y/o usuario no validos!",Toast.LENGTH_SHORT).show()
+                                    pD.dismiss()
+                                    position=0
+                                }
+
+
+                                pD.dismiss()
+
+                            }
+
+                        })
+
+
+
+
+
+                    }
+
+                    }
+                mDialogView.Cancelar.setOnClickListener{
+                    val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputManager.hideSoftInputFromWindow(mDialogView.windowToken,0)
+                    mAlertDialog.dismiss()
+
+                }
+
+
 
             }
             R.id.nav_Reportes-> {
