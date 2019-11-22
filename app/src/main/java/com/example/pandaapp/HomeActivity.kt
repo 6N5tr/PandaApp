@@ -147,12 +147,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                                     .inflate(R.layout.cantidad_dialog, null)
                                                 val mBuilder = AlertDialog.Builder(this@HomeActivity)
                                                     .setView(mDialogView)
-                                                    .setTitle("Agregar Cantidad")
+                                                    .setTitle("Agregar Cantidad "+model.Name)
                                                 val mAlertDialog = mBuilder.show()
 
                                                 val inputManager: InputMethodManager =
                                                     getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                                 inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+                                                mDialogView.inputcantidad.requestFocus()
 
 //1
                                                 mDialogView.Aceptar.setOnClickListener{
@@ -281,12 +282,15 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                         val mDialogView=LayoutInflater.from(this@HomeActivity).inflate(R.layout.cantidad_dialog,null)
                                         val mBuilder=AlertDialog.Builder(this@HomeActivity)
                                             .setView(mDialogView)
-                                            .setTitle("Agregar Cantidad")
+                                            .setTitle("Agregar Cantidad "+model.Name)
                                         val mAlertDialog=mBuilder.show()
+
+
+                                        // open the soft keyboard
 
                                         val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                         inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
-
+                                        mDialogView.inputcantidad.requestFocus()
 //2
                                         mDialogView.Aceptar.setOnClickListener{
                                             val cantidad = mDialogView.inputcantidad.text.toString()
@@ -402,13 +406,16 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             val mDialogView=LayoutInflater.from(this@HomeActivity).inflate(R.layout.cantidad_dialog,null)
                             val mBuilder=AlertDialog.Builder(this@HomeActivity)
                                 .setView(mDialogView)
-                                .setTitle("Agregar Cantidad")
+                                .setTitle("Agregar Cantidad "+model.Name)
+
                             val txtFullName=headerView.findViewById<TextView>(R.id.textView)
                             val mAlertDialog=mBuilder.show()
-                            mDialogView.inputcantidad.findFocus()
+
+
 
                             val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                             inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
+                            mDialogView.inputcantidad.requestFocus()
 
 //3
                             mDialogView.Aceptar.setOnClickListener{
@@ -417,7 +424,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                     Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
                                 }
                                 else {
-
+                                    mDialogView.inputcantidad.requestFocus()
                                     val inputManager: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                     inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
                                     mAlertDialog.dismiss()
@@ -480,7 +487,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             /*Snackbar.make(view, "Preventa", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()*/
 
-             var VentasIntent=Intent(this,VentasActivity::class.java)
+            var VentasIntent=Intent(this,VentasActivity::class.java)
             startActivity(VentasIntent)
             finish()
 
@@ -502,6 +509,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val intent = Intent(this, InlineScanActivity::class.java)
         startActivityForResult(intent, Code)
+
 
     }
 
@@ -571,16 +579,17 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                             Picasso.get().load(model.Photo).into(holder.mImagen)
 
 
-                                            holder.itemView.setOnClickListener {
 
                                                 val mDialogView=LayoutInflater.from(this@HomeActivity).inflate(R.layout.cantidad_dialog,null)
                                                 val mBuilder=AlertDialog.Builder(this@HomeActivity)
                                                     .setView(mDialogView)
-                                                    .setTitle("Agregar Cantidad")
-                                                val mAlertDialog=mBuilder.show()
+                                                    .setTitle("Agregar Cantidad "+model.Name)
+
+                                            val mAlertDialog=mBuilder.show()
 
                                                 val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                                 inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
+                                                mDialogView.inputcantidad.requestFocus()
 //4
 
                                             mDialogView.Aceptar.setOnClickListener{
@@ -636,7 +645,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                                                 }
 
-                                            }
+
 
                                         }
 
@@ -696,11 +705,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             val mDialogView=LayoutInflater.from(this@HomeActivity).inflate(R.layout.cantidad_dialog,null)
                             val mBuilder=AlertDialog.Builder(this@HomeActivity)
                                 .setView(mDialogView)
-                                .setTitle("Agregar Cantidad")
+                                .setTitle("Agregar Cantidad "+model.Name)
+
                             val mAlertDialog=mBuilder.show()
 
                             val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                             inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
+                            mDialogView.inputcantidad.requestFocus()
 //5
                             mDialogView.Aceptar.setOnClickListener{
                                 val cantidad = mDialogView.inputcantidad.text.toString()
@@ -834,6 +845,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
+                //mDialogView.inputcantidad.requestFocus()
 //5
                 mDialogView.Aceptar.setOnClickListener{
                     val user = mDialogView.usuario.text.toString()
@@ -945,7 +957,12 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-
+    fun openSoftKeyboard(context: Context, view: View) {
+        view.requestFocus()
+        // open the soft keyboard
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+    }
 }
 
 

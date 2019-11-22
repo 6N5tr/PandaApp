@@ -69,7 +69,7 @@ class Database(context: Context?) : SQLiteAssetHelper(context, DB_NAME, null, DB
     fun eliminaItem(Id:Int){
         var db=readableDatabase
         var query= String.format("DELETE FROM DETALLEPEDIDOS\n" +
-                "WHERE IdProducto="+Id+";")
+                "WHERE IdProducto="+Id.toInt()+";")
         db.execSQL(query)
     }
 

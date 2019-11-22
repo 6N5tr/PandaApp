@@ -232,11 +232,14 @@ class VentasActivity : AppCompatActivity() {
         val swipeHandler = object : SwipeToDeleteCallback(this) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 var IdPro=mVentas.get(viewHolder.adapterPosition).IdProducto
+
                 Database(this@VentasActivity).eliminaItem(
                     Id= IdPro!!.toInt()
                 )
                 mAdap.removeAt(viewHolder.adapterPosition)
-                Toast.makeText(this@VentasActivity,"Venta Modificada!",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@VentasActivity,"Venta Modificada!"+IdPro,Toast.LENGTH_SHORT).show()
+                total=0.0
+
                 CargarTotalVentas()
 
             }
