@@ -1,4 +1,4 @@
-package com.example.pandaapp
+package com.example .pandaapp
 
 import android.app.Activity
 import android.app.ProgressDialog
@@ -70,6 +70,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val REQUEST_CODE_SPEECH_INPUT=100
 
     private val Code=1
+
+    var barcode=""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -500,8 +502,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     private fun getCodebar() {
-        /*var CodebarIntent=Intent(this,InlineScanActivity::class.java)
-        startActivity(CodebarIntent)*/
 
         val intent = Intent(this, InlineScanActivity::class.java)
         startActivityForResult(intent, Code)
@@ -990,7 +990,153 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
+
+
+    override fun dispatchKeyEvent(e: KeyEvent): Boolean {
+
+        if (e.action == KeyEvent.ACTION_DOWN) {
+            //Log.i(FragmentActivity.TAG, "dispatchKeyEvent: $e")
+            val pressedKey = e.unicodeChar.toChar()
+            barcode += pressedKey
+        }
+        if (e.action == KeyEvent.ACTION_DOWN && e.keyCode == KeyEvent.KEYCODE_ENTER) {
+
+            // Toast.makeText(this@HomeActivity,"Codigo de Barras --->>> $barcode", Toast.LENGTH_SHORT).show()
+
+            val result = barcode
+            if (result != null) {
+                if (result == null) {
+                    Toast.makeText(this, "No Agregado al Carrito!", Toast.LENGTH_LONG).show()
+                } else {
+
+                    var codebar= result
+                    val option = FirebaseRecyclerOptions.Builder<Vista>()
+                        .setQuery(database.getReference("Views").orderByChild("Codebar").equalTo(codebar.substring(0,12)),Vista::class.java)
+                        .build()
+
+                    //Toast.makeText(this, ""+codebar, Toast.LENGTH_LONG).show()
+                    val firebaseRecyclerAdapter =
+                        object : FirebaseRecyclerAdapter<Vista, MenuViewHolder>(option) {
+                            override fun onCreateViewHolder(p0: ViewGroup, p1: Int): MenuViewHolder {
+                                val itemv = LayoutInflater.from(this@HomeActivity)
+                                    .inflate(R.layout.menu_item, p0, false)
+                                return MenuViewHolder(itemv)
+                            }
+
+                            override fun onBindViewHolder(holder: MenuViewHolder, position: Int, model: Vista) {
+                                val refid = getRef(position).key.toString()
+                                ref.child(refid).addValueEventListener(object : ValueEventListener {
+                                    override fun onCancelled(p0: DatabaseError) {
+                                    }
+
+                                    override fun onDataChange(p0: DataSnapshot) {
+
+                                        val number: String = "%.2f".format(model.Price)
+                                        show_progress.visibility =
+                                            if (itemCount == 0) View.VISIBLE else View.GONE
+                                        holder.mNombre.text = " " + model.Name
+                                        holder.mPrecio.text = number + " "
+                                        Picasso.get().load(model.Photo).into(holder.mImagen)
+
+
+
+                                        val mDialogView=LayoutInflater.from(this@HomeActivity).inflate(R.layout.cantidad_dialog,null)
+                                        val mBuilder=AlertDialog.Builder(this@HomeActivity)
+                                            .setView(mDialogView)
+                                            .setTitle("Agregar Cantidad")
+                                        val mAlertDialog=mBuilder.show()
+
+                                        val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                        inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
+
+//2
+                                        mDialogView.Aceptar.setOnClickListener{
+                                            val cantidad = mDialogView.inputcantidad.text.toString()
+                                            if (cantidad.isEmpty()) {
+                                                Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
+                                            }
+                                            else {
+
+                                                val inputManager: InputMethodManager =
+                                                    getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                                inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
+                                                mAlertDialog.dismiss()
+
+                                                //Agregar comparacion de pedidos.
+                                                if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
+                                                    var IdPro=Database(this@HomeActivity).checkId(model.Name.toString())
+                                                    var cantPro=Database(this@HomeActivity).getCant(model.Name.toString())
+                                                    val cantidad = mDialogView.inputcantidad.text.toString()
+                                                    Database(this@HomeActivity).editVenta(
+                                                        Id= IdPro!!.toInt(),
+                                                        cantidad = (cantidad.toInt()+cantPro).toString()
+                                                    )
+                                                    //Mensaje que se muestra cuando un producto ya esta agragado a las ventas y se desea agregar o modicar el valor de la cantida de este
+                                                    Toast.makeText(this@HomeActivity,""+model.Name.toString()+" Cantidad Total: "+(cantidad.toInt()+cantPro).toString(), Toast.LENGTH_SHORT).show()
+                                                }
+                                                else{
+                                                    Database(this@HomeActivity).addToVentas(
+                                                        DetallePedidos(
+                                                            IdProducto =model.Id.toString(),
+                                                            NombreProducto = model.Name,
+                                                            CantidadProducto = cantidad,
+                                                            PrecioProducto = model.Price.toString()
+                                                        )
+                                                    )
+
+                                                    Toast.makeText(
+                                                        this@HomeActivity,
+                                                        "Item agregado a la venta",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
+                                            }
+                                        }
+                                        mDialogView.Cancelar.setOnClickListener{
+                                            val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                            inputManager.hideSoftInputFromWindow(mDialogView.windowToken,0)
+                                            mAlertDialog.dismiss()
+
+                                        }
+
+                                    }
+
+
+
+
+
+                                })
+                            }
+
+
+                        }
+
+                    mRecyclerView.adapter = firebaseRecyclerAdapter
+                    firebaseRecyclerAdapter.startListening()
+
+                    mSearchBar?.enableSearch()
+                    Toast.makeText(this, "Escaneo Terminado!", Toast.LENGTH_LONG).show()
+
+
+
+                }
+            } else {
+                Toast.makeText(this, "No Agregado al Carrito!", Toast.LENGTH_LONG).show()
+            }
+
+
+            barcode = ""
+
+
+
+        }
+
+        return false
+    }
+
+
 }
+
 
 
 

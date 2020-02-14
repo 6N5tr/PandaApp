@@ -20,9 +20,6 @@ import kotlinx.android.synthetic.main.activity_inline_scan.*
 class InlineScanActivity : AppCompatActivity() {
 
     lateinit var captureManager: CaptureManager
-    var scanState: Boolean = false
-    var torchState: Boolean = false
-    private var requestCode = IntentIntegrator.REQUEST_CODE
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
