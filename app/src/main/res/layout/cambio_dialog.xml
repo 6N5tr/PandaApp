@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             android:layout_width="match_parent"
+              android:orientation="vertical"
+                                             android:layout_height="match_parent"
+android:padding="10dp">
+
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="Finalizar Venta"
+            android:gravity="center"
+            android:textSize="42dp"
+
+    />
+
+
+    <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="center"
+            android:padding="10dp"
+
+
+            >
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:id="@+id/pagoventa"
+                android:textSize="42dp"
+                android:inputType="number"
+                android:gravity="center"
+                android:paddingLeft="50dp"
+                android:text="Pago:"
+
+                />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:id="@+id/pagoventa1"
+                android:layout_toEndOf="@+id/pagoventa"
+                android:paddingRight="50dp"
+                android:textSize="42dp"
+                android:inputType="number"
+                android:gravity="right"
+                android:hint="1000"
+
+                />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="center"
+
+            android:padding="10dp"
+            >
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:id="@+id/totalventa"
+                android:textSize="42dp"
+                android:inputType="number"
+                android:gravity="left"
+                android:text="Total:"
+                android:paddingLeft="50dp"
+
+                />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:id="@+id/totalventa1"
+                android:paddingRight="50dp"
+                android:layout_toEndOf="@+id/totalventa"
+                android:textSize="42dp"
+                android:inputType="number"
+                android:gravity="right"
+                android:hint="1000"
+
+                />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="center"
+
+            android:padding="10dp"
+            >
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:id="@+id/cambioventa"
+                android:textSize="42dp"
+                android:inputType="number"
+                android:gravity="center"
+                android:text="Cambio:"
+
+                />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:id="@+id/cambioventa1"
+                android:paddingRight="50dp"
+                android:layout_toEndOf="@+id/cambioventa"
+                android:textSize="42dp"
+                android:inputType="number"
+                android:gravity="right"
+                android:hint="1000"
+
+                />
+
+    </RelativeLayout>
+
+
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Desea finalizar la venta?"
+            android:gravity="center"
+            android:textSize="30dp"
+            android:paddingTop="41dp"
+            />
+
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal"
+    android:gravity="center"   android:textSize="30dp"  android:paddingTop="11dp"
+
+
+    >
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:id="@+id/Cancelar"
+                android:text="Cancelar"
+                android:background="@color/botonesinicio"
+                android:layout_marginRight="25dp"
+                />
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:id="@+id/Aceptar"
+                android:text="Aceptar"
+                android:background="@color/secondColor"
+                android:layout_marginLeft="25dp"
+                />
+
+
+
+
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -30,8 +30,8 @@ import com.example.pandaapp.Model.Producto
 import com.example.pandaapp.Swipe.SwipeToDeleteCallback
 import com.google.firebase.database.*
 import android.text.Editable
-
-
+import android.widget.EditText
+import kotlinx.android.synthetic.main.cambio_dialog.*
 
 
 class VentasActivity : AppCompatActivity() {
@@ -82,77 +82,109 @@ class VentasActivity : AppCompatActivity() {
 
         btnVentaRealizada.setOnClickListener{
 
+
+
             if(total>0){
-                // Initialize a new instance of
-                val builder = AlertDialog.Builder(this@VentasActivity)
-
-                // Set the alert dialog title
-                builder.setTitle("Finalizar Venta")
-
-                // Display a message on alert dialog
-                builder.setMessage("Desea finalizar la venta?")
-
-                // Set a positive button and its click listener on alert dialog
-                builder.setPositiveButton("Aceptar"){dialog, which ->
-                    // Do something when user press the positive button
-                    var request=Request(Comun.currentUser,mTextTotal.text.toString(),Detalle = mVentas,FechayHora = mFechayHora )
-
-                    mRequest.child(Comun.currentUser+" "+System.currentTimeMillis().toString()).setValue(request)
-
-                    Database(baseContext).borrarTodoVentas()
 
 
-                    for (item in mVentas) {
-                        var id=item.IdProducto.toString()
-                        var cantidad=item.CantidadProducto.toString()
+
+                val mDialogView1=LayoutInflater.from(this@VentasActivity).inflate(R.layout.pago_dialog,null)
+                val mBuilder=AlertDialog.Builder(this@VentasActivity)
+                    .setView(mDialogView1)
+                    .setTitle("Agregar Valor Monetario: ")
+                val mAlertDialog=mBuilder.show()
+
+                // open the soft keyboard
+
+                val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
+                mDialogView1.inputcantidad.requestFocus()
+
+                mDialogView1.Aceptar.setOnClickListener{
+                    val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputManager.hideSoftInputFromWindow(mDialogView1.windowToken,0)
+                    mAlertDialog.dismiss()
+
+                    val pago = mDialogView1.inputcantidad.text.toString()
+                    val mDialogView=LayoutInflater.from(this@VentasActivity).inflate(R.layout.cambio_dialog,null)
+                    val mBuilder=AlertDialog.Builder(this@VentasActivity)
+                        .setView(mDialogView)
 
 
-                        ref.child(id).child("Quantity").addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onCancelled(p0: DatabaseError) {
-                            }
+                    var local= Locale("en","US")
+                    var frmt= NumberFormat.getCurrencyInstance(local)
 
-                            override fun onDataChange(p0: DataSnapshot) {
+                    val pago1=mDialogView.findViewById<TextView>(R.id.pagoventa1)
+                    pago1.text=""+frmt.format(pago.toDouble())
 
-                                var cantidadExistente = p0.value.toString()
+                    val total1=mDialogView.findViewById<TextView>(R.id.totalventa1)
+                    total1.text=""+frmt.format(total)
 
-                                var valor=cantidadExistente.toInt()-(cantidad.toInt())
-                                ref.child(id).child("Quantity").setValue(valor)
+                    val cambio1=mDialogView.findViewById<TextView>(R.id.cambioventa1)
+                    cambio1.text=""+frmt.format(pago.toDouble()-total)
 
-                            }
-                        })
+                    val mAlertDialog=mBuilder.show()
 
+                    mDialogView.Aceptar.setOnClickListener{
+                        var request=Request(Comun.currentUser,mTextTotal.text.toString(),Detalle = mVentas,FechayHora = mFechayHora )
+
+                        mRequest.child(Comun.currentUser+" "+System.currentTimeMillis().toString()).setValue(request)
+
+                        Database(baseContext).borrarTodoVentas()
+
+
+                        for (item in mVentas) {
+                            var id=item.IdProducto.toString()
+                            var cantidad=item.CantidadProducto.toString()
+
+
+                            ref.child(id).child("Quantity").addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onCancelled(p0: DatabaseError) {
+                                }
+
+                                override fun onDataChange(p0: DataSnapshot) {
+
+                                    var cantidadExistente = p0.value.toString()
+
+                                    var valor=cantidadExistente.toInt()-(cantidad.toInt())
+                                    ref.child(id).child("Quantity").setValue(valor)
+
+                                }
+                            })
+
+
+                        }
+
+
+                        //Restar cantidades a productos.
+
+                        var HomeIntent= Intent(this,HomeActivity::class.java)
+                        startActivity(HomeIntent)
+
+                        finish()
+
+                        Toast.makeText(applicationContext,"Venta Realizada!",Toast.LENGTH_SHORT).show()
 
                     }
 
 
-                    //Restar cantidades a productos.
+                    // Display a negative button on alert dialog
+                    mDialogView.Cancelar.setOnClickListener{
+                        mAlertDialog.dismiss()
+                        Toast.makeText(applicationContext,"Venta Cancelada!",Toast.LENGTH_SHORT).show()
+                    }
 
 
 
 
 
-                    var HomeIntent= Intent(this,HomeActivity::class.java)
-                    startActivity(HomeIntent)
-
-                    finish()
-
-                    Toast.makeText(applicationContext,"Venta Realizada!",Toast.LENGTH_SHORT).show()
 
                 }
-
-
-                // Display a negative button on alert dialog
-                builder.setNegativeButton("Cancelar"){dialog,which ->
-                    builder.show().dismiss()
-                    Toast.makeText(applicationContext,"Venta Cancelada!",Toast.LENGTH_SHORT).show()
+                mDialogView1.Cancelar.setOnClickListener{
+                    val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputManager.hideSoftInputFromWindow(mDialogView1.windowToken,0)
+                    mAlertDialog.dismiss()
                 }
-
-
-                // Finally, make the alert dialog using builder
-                val dialog: AlertDialog = builder.create()
-
-                // Display the alert dialog on app interface
-                dialog.show()
 
 
 
@@ -194,18 +226,7 @@ class VentasActivity : AppCompatActivity() {
             }
 
 
-            // Display a negative button on alert dialog
-            builder.setNegativeButton("Cancelar"){dialog,which ->
-                builder.show().dismiss()
-                Toast.makeText(applicationContext,"No se ha cancelado la venta!",Toast.LENGTH_SHORT).show()
-            }
 
-
-            // Finally, make the alert dialog using builder
-            val dialog: AlertDialog = builder.create()
-
-            // Display the alert dialog on app interface
-            dialog.show()
 
 
         }
