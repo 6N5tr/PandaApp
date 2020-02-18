@@ -16,14 +16,14 @@
             android:layout_height="wrap_content">
 
         <com.mancj.materialsearchbar.MaterialSearchBar
+                android:id="@+id/searchBar"
                 style="@style/MaterialSearchBarLight"
-                app:mt_speechMode="true"
-                android:layout_alignParentTop="true"
-                app:mt_hint="Buscar Producto"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
                 android:layout_weight="5"
-                android:id="@+id/searchBar"/>
+                app:mt_hint="Buscar Producto"
+                app:mt_speechMode="true" />
 
         <ImageView
                 android:id="@+id/barcode"

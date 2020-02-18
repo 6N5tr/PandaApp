@@ -30,16 +30,24 @@ import com.example.pandaapp.Model.Producto
 import com.example.pandaapp.Swipe.SwipeToDeleteCallback
 import com.google.firebase.database.*
 import android.text.Editable
+import android.text.TextWatcher
 import android.widget.EditText
 import kotlinx.android.synthetic.main.cambio_dialog.*
+import kotlinx.android.synthetic.main.cantidad_dialog.view.Aceptar
+import kotlinx.android.synthetic.main.cantidad_dialog.view.Cancelar
+import kotlinx.android.synthetic.main.cantidad_dialog.view.inputcantidad
+import kotlinx.android.synthetic.main.nav_header_home.view.*
+import kotlinx.android.synthetic.main.pago_dialog.*
+import kotlinx.android.synthetic.main.pago_dialog.view.*
+import java.math.BigDecimal
 
 
 class VentasActivity : AppCompatActivity() {
 
-    var evento=0
 
+    var p="Panda/"
     var database = FirebaseDatabase.getInstance()
-    var ref = database.getReference("Views")
+    var ref = database.getReference(p+"Views")
 
     lateinit var mRecyclerView: RecyclerView
     lateinit var mLayout:RecyclerView.LayoutManager
@@ -62,7 +70,7 @@ class VentasActivity : AppCompatActivity() {
 
         //Firebase
         mDatabase=FirebaseDatabase.getInstance()
-        mRequest=mDatabase.getReference("Ventas")
+        mRequest=mDatabase.getReference(p+"Ventas")
 
 
         //init
@@ -100,12 +108,66 @@ class VentasActivity : AppCompatActivity() {
                 inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
                 mDialogView1.inputcantidad.requestFocus()
 
+                var current = ""
+                var local= Locale("en","US")
+                var frmt= NumberFormat.getCurrencyInstance(local)
+
+                mDialogView1.inputcantidad.addTextChangedListener(
+                    object : TextWatcher {
+
+                        override fun afterTextChanged(s: Editable) {
+
+
+
+                        }
+
+                        override fun beforeTextChanged(s: CharSequence, start: Int,
+                                                       count: Int, after: Int) {
+                        }
+
+                        override fun onTextChanged(s: CharSequence, start: Int,
+                                                   before: Int, count: Int) {
+                            if(!s.toString().equals(current)){
+                                mDialogView1.inputcantidad.removeTextChangedListener(this)
+                                var replaceable = String.format("[%s,.\\s]",
+                                    NumberFormat.getCurrencyInstance().getCurrency()
+                                        .getSymbol())
+
+                                var pago = s.toString().replace(replaceable.toRegex(),"")
+                                Toast.makeText(applicationContext,"Pago: ${pago}",Toast.LENGTH_SHORT).show()
+
+                                var parsed = BigDecimal(pago).setScale(2, BigDecimal.ROUND_FLOOR).divide(BigDecimal(100), BigDecimal.ROUND_FLOOR)
+                                var formatted = NumberFormat.getCurrencyInstance().format(parsed)
+
+
+//0
+                                current = formatted
+                                mDialogView1.inputcantidad.setText(formatted)
+                                mDialogView1.inputcantidad.setSelection(formatted.length)
+
+                                mDialogView1.inputcantidad.addTextChangedListener(this)
+                            }
+
+                        }
+
+                    })
+
+
+
                 mDialogView1.Aceptar.setOnClickListener{
+
                     val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     inputManager.hideSoftInputFromWindow(mDialogView1.windowToken,0)
                     mAlertDialog.dismiss()
-
-                    val pago = mDialogView1.inputcantidad.text.toString()
+                    var entrada=mDialogView1.inputcantidad.text.toString().replace(',', '.')
+                    var pago = entrada.substring(1,mDialogView1.inputcantidad.text.toString().length).toDouble()
+                    if(pago==0.00){
+                        pago = 0.00
+                    }
+                    else {
+                        Toast.makeText(applicationContext,"Pago: ${pago}!",Toast.LENGTH_SHORT).show()
+                        pago = entrada.substring(1,mDialogView1.inputcantidad.text.toString().length).toDouble()
+                    }
                     val mDialogView=LayoutInflater.from(this@VentasActivity).inflate(R.layout.cambio_dialog,null)
                     val mBuilder=AlertDialog.Builder(this@VentasActivity)
                         .setView(mDialogView)
@@ -115,13 +177,22 @@ class VentasActivity : AppCompatActivity() {
                     var frmt= NumberFormat.getCurrencyInstance(local)
 
                     val pago1=mDialogView.findViewById<TextView>(R.id.pagoventa1)
-                    pago1.text=""+frmt.format(pago.toDouble())
+                    pago1.text=""+frmt.format(pago)
 
                     val total1=mDialogView.findViewById<TextView>(R.id.totalventa1)
                     total1.text=""+frmt.format(total)
 
+
                     val cambio1=mDialogView.findViewById<TextView>(R.id.cambioventa1)
-                    cambio1.text=""+frmt.format(pago.toDouble()-total)
+
+                    if(pago==0.00){
+                       cambio1.text="$0.00"
+                    }
+                    else{
+                        Toast.makeText(applicationContext,"Pago: ${pago}!",Toast.LENGTH_SHORT).show()
+                        cambio1.text=""+frmt.format(pago.toDouble()-total)
+                    }
+
 
                     val mAlertDialog=mBuilder.show()
 
@@ -226,7 +297,18 @@ class VentasActivity : AppCompatActivity() {
             }
 
 
+            // Display a negative button on alert dialog
+            builder.setNegativeButton("Cancelar"){dialog,which ->
+                builder.show().dismiss()
+                Toast.makeText(applicationContext,"No se ha cancelado la venta!",Toast.LENGTH_SHORT).show()
+            }
 
+
+            // Finally, make the alert dialog using builder
+            val dialog: AlertDialog = builder.create()
+
+            // Display the alert dialog on app interface
+            dialog.show()
 
 
         }

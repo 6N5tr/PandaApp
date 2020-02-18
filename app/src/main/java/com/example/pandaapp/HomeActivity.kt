@@ -54,9 +54,9 @@ import kotlinx.android.synthetic.main.loginingresos_dialog.view.*
 import java.util.*
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-
+    var p="Panda/"
     var database = FirebaseDatabase.getInstance()
-    var ref = database.getReference("Views")
+    var ref = database.getReference(p+"Views")
 
     lateinit var mRecyclerView:RecyclerView
     lateinit var show_progress:ProgressBar
@@ -235,6 +235,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         speak()
 
                     }
+
 
 
                 }
@@ -714,71 +715,86 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         Picasso.get().load(model.Photo).into(holder.mImagen)
 
 
-                        holder.itemView.setOnClickListener{
+                        holder.itemView.setOnClickListener {
+                            if (!(this@HomeActivity).isFinishing) {
+                                val mDialogView = LayoutInflater.from(this@HomeActivity)
+                                    .inflate(R.layout.cantidad_dialog, null)
+                                val mBuilder = AlertDialog.Builder(this@HomeActivity)
+                                    .setView(mDialogView)
+                                    .setTitle("Agregar Cantidad " + model.Name)
 
-                            val mDialogView=LayoutInflater.from(this@HomeActivity).inflate(R.layout.cantidad_dialog,null)
-                            val mBuilder=AlertDialog.Builder(this@HomeActivity)
-                                .setView(mDialogView)
-                                .setTitle("Agregar Cantidad "+model.Name)
+                                val mAlertDialog = mBuilder.show()
 
-                            val mAlertDialog=mBuilder.show()
-
-                            val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                            inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
-                            mDialogView.inputcantidad.requestFocus()
+                                val inputManager: InputMethodManager =
+                                    getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+                                mDialogView.inputcantidad.requestFocus()
 
 //5
-                            mDialogView.Aceptar.setOnClickListener{
-                                val cantidad = mDialogView.inputcantidad.text.toString()
-                                if (cantidad.isEmpty()) {
-                                    Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
-                                }
-                                else {
+                                mDialogView.Aceptar.setOnClickListener {
+                                    val cantidad = mDialogView.inputcantidad.text.toString()
+                                    if (cantidad.isEmpty()) {
+                                        Toast.makeText(
+                                            this@HomeActivity,
+                                            "Agregue la cantidad",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
 
+                                        val inputManager: InputMethodManager =
+                                            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                        inputManager.hideSoftInputFromWindow(
+                                            mDialogView.windowToken,
+                                            0
+                                        )
+                                        mAlertDialog.dismiss()
+
+                                        //Agregar comparacion de pedidos.
+                                        if (Database(this@HomeActivity).checkItem(model.Name.toString()) == true) {
+
+                                            var IdPro =
+                                                Database(this@HomeActivity).checkId(model.Name.toString())
+                                            var cantPro =
+                                                Database(this@HomeActivity).getCant(model.Name.toString())
+                                            val cantidad = mDialogView.inputcantidad.text.toString()
+                                            Database(this@HomeActivity).editVenta(
+                                                Id = IdPro!!.toInt(),
+                                                cantidad = (cantidad.toInt() + cantPro).toString()
+                                            )
+                                            //Mensaje que se muestra cuando un producto ya esta agragado a las ventas y se desea agregar o modicar el valor de la cantida de este
+                                            Toast.makeText(
+                                                this@HomeActivity,
+                                                "" + model.Name.toString() + " Cantidad Total: " + (cantidad.toInt() + cantPro).toString(),
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        } else {
+                                            Database(this@HomeActivity).addToVentas(
+                                                DetallePedidos(
+                                                    IdProducto = model.Id.toString(),
+                                                    NombreProducto = model.Name,
+                                                    CantidadProducto = cantidad,
+                                                    PrecioProducto = model.Price.toString()
+                                                )
+                                            )
+
+                                            Toast.makeText(
+                                                this@HomeActivity,
+                                                "Item agregado a la venta",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+
+                                    }
+                                }
+                                mDialogView.Cancelar.setOnClickListener {
                                     val inputManager: InputMethodManager =
                                         getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                                     inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
                                     mAlertDialog.dismiss()
 
-                                    //Agregar comparacion de pedidos.
-                                    if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
-
-                                        var IdPro=Database(this@HomeActivity).checkId(model.Name.toString())
-                                        var cantPro=Database(this@HomeActivity).getCant(model.Name.toString())
-                                        val cantidad = mDialogView.inputcantidad.text.toString()
-                                        Database(this@HomeActivity).editVenta(
-                                            Id= IdPro!!.toInt(),
-                                            cantidad = (cantidad.toInt()+cantPro).toString()
-                                        )
-                                        //Mensaje que se muestra cuando un producto ya esta agragado a las ventas y se desea agregar o modicar el valor de la cantida de este
-                                        Toast.makeText(this@HomeActivity,""+model.Name.toString()+" Cantidad Total: "+(cantidad.toInt()+cantPro).toString(), Toast.LENGTH_SHORT).show()
-                                    }
-                                    else{
-                                        Database(this@HomeActivity).addToVentas(
-                                            DetallePedidos(
-                                                IdProducto =model.Id.toString(),
-                                                NombreProducto = model.Name,
-                                                CantidadProducto = cantidad,
-                                                PrecioProducto = model.Price.toString()
-                                            )
-                                        )
-
-                                        Toast.makeText(
-                                            this@HomeActivity,
-                                            "Item agregado a la venta",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-
                                 }
-                            }
-                            mDialogView.Cancelar.setOnClickListener{
-                                val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                                inputManager.hideSoftInputFromWindow(mDialogView.windowToken,0)
-                                mAlertDialog.dismiss()
 
                             }
-
                         }
 
                     }
@@ -837,15 +853,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
-            R.id.action_settings -> return true
-            else -> return super.onOptionsItemSelected(item)
-        }
-    }
+
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
@@ -1005,18 +1013,19 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             val result = barcode
             if (result != null) {
+
                 if (result == null) {
                     Toast.makeText(this, "No Agregado al Carrito!", Toast.LENGTH_LONG).show()
                 } else {
+                    if(result.length>=0){
 
-                    var codebar= result
-                    val option = FirebaseRecyclerOptions.Builder<Vista>()
-                        .setQuery(database.getReference("Views").orderByChild("Codebar").equalTo(codebar.substring(0,12)),Vista::class.java)
-                        .build()
+                        var codebar= result
+                        searchBar.text=codebar
+                        val option = FirebaseRecyclerOptions.Builder<Vista>()
+                            .setQuery(database.getReference("Views").orderByChild("Codebar").equalTo(codebar.substring(0,codebar.length-1)),Vista::class.java)
+                            .build()
 
-                    //Toast.makeText(this, ""+codebar, Toast.LENGTH_LONG).show()
-                    val firebaseRecyclerAdapter =
-                        object : FirebaseRecyclerAdapter<Vista, MenuViewHolder>(option) {
+                        val firebaseRecyclerAdapter =object : FirebaseRecyclerAdapter<Vista, MenuViewHolder>(option) {
                             override fun onCreateViewHolder(p0: ViewGroup, p1: Int): MenuViewHolder {
                                 val itemv = LayoutInflater.from(this@HomeActivity)
                                     .inflate(R.layout.menu_item, p0, false)
@@ -1039,84 +1048,123 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                         Picasso.get().load(model.Photo).into(holder.mImagen)
 
 
-
-                                        val mDialogView=LayoutInflater.from(this@HomeActivity).inflate(R.layout.cantidad_dialog,null)
-                                        val mBuilder=AlertDialog.Builder(this@HomeActivity)
-                                            .setView(mDialogView)
-                                            .setTitle("Agregar Cantidad")
-                                        val mAlertDialog=mBuilder.show()
-
-                                        val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                                        inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
-
-//2
-                                        mDialogView.Aceptar.setOnClickListener{
-                                            val cantidad = mDialogView.inputcantidad.text.toString()
-                                            if (cantidad.isEmpty()) {
-                                                Toast.makeText(this@HomeActivity,"Agregue la cantidad", Toast.LENGTH_SHORT).show()
-                                            }
-                                            else {
+                                            if (!(this@HomeActivity).isFinishing) {
+                                                val mDialogView = LayoutInflater.from(this@HomeActivity)
+                                                    .inflate(R.layout.cantidad_dialog, null)
+                                                val mBuilder = AlertDialog.Builder(this@HomeActivity)
+                                                    .setView(mDialogView)
+                                                    .setTitle("Agregar Cantidad")
+                                                val mAlertDialog = mBuilder.show()
 
                                                 val inputManager: InputMethodManager =
                                                     getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                                                inputManager.hideSoftInputFromWindow(mDialogView.windowToken, 0)
-                                                mAlertDialog.dismiss()
+                                                inputManager.toggleSoftInput(
+                                                    InputMethodManager.SHOW_FORCED,
+                                                    0
+                                                )
 
-                                                //Agregar comparacion de pedidos.
-                                                if(Database(this@HomeActivity).checkItem(model.Name.toString())==true){
-                                                    var IdPro=Database(this@HomeActivity).checkId(model.Name.toString())
-                                                    var cantPro=Database(this@HomeActivity).getCant(model.Name.toString())
-                                                    val cantidad = mDialogView.inputcantidad.text.toString()
-                                                    Database(this@HomeActivity).editVenta(
-                                                        Id= IdPro!!.toInt(),
-                                                        cantidad = (cantidad.toInt()+cantPro).toString()
-                                                    )
-                                                    //Mensaje que se muestra cuando un producto ya esta agragado a las ventas y se desea agregar o modicar el valor de la cantida de este
-                                                    Toast.makeText(this@HomeActivity,""+model.Name.toString()+" Cantidad Total: "+(cantidad.toInt()+cantPro).toString(), Toast.LENGTH_SHORT).show()
-                                                }
-                                                else{
-                                                    Database(this@HomeActivity).addToVentas(
-                                                        DetallePedidos(
-                                                            IdProducto =model.Id.toString(),
-                                                            NombreProducto = model.Name,
-                                                            CantidadProducto = cantidad,
-                                                            PrecioProducto = model.Price.toString()
+//2
+                                                mDialogView.Aceptar.setOnClickListener {
+                                                    val cantidad =
+                                                        mDialogView.inputcantidad.text.toString()
+                                                    if (cantidad.isEmpty()) {
+                                                        Toast.makeText(
+                                                            this@HomeActivity,
+                                                            "Agregue la cantidad",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                    } else {
+
+                                                        val inputManager: InputMethodManager =
+                                                            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                                        inputManager.hideSoftInputFromWindow(
+                                                            mDialogView.windowToken,
+                                                            0
                                                         )
-                                                    )
+                                                        mAlertDialog.dismiss()
 
-                                                    Toast.makeText(
-                                                        this@HomeActivity,
-                                                        "Item agregado a la venta",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
+                                                        //Agregar comparacion de pedidos.
+                                                        if (Database(this@HomeActivity).checkItem(model.Name.toString()) == true) {
+                                                            var IdPro =
+                                                                Database(this@HomeActivity).checkId(
+                                                                    model.Name.toString()
+                                                                )
+                                                            var cantPro =
+                                                                Database(this@HomeActivity).getCant(
+                                                                    model.Name.toString()
+                                                                )
+                                                            val cantidad =
+                                                                mDialogView.inputcantidad.text.toString()
+                                                            Database(this@HomeActivity).editVenta(
+                                                                Id = IdPro!!.toInt(),
+                                                                cantidad = (cantidad.toInt() + cantPro).toString()
+                                                            )
+                                                            //Mensaje que se muestra cuando un producto ya esta agragado a las ventas y se desea agregar o modicar el valor de la cantida de este
+                                                            Toast.makeText(
+                                                                this@HomeActivity,
+                                                                "" + model.Name.toString() + " Cantidad Total: " + (cantidad.toInt() + cantPro).toString(),
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
+                                                        } else {
+                                                            Database(this@HomeActivity).addToVentas(
+                                                                DetallePedidos(
+                                                                    IdProducto = model.Id.toString(),
+                                                                    NombreProducto = model.Name,
+                                                                    CantidadProducto = cantidad,
+                                                                    PrecioProducto = model.Price.toString()
+                                                                )
+                                                            )
+
+                                                            Toast.makeText(
+                                                                this@HomeActivity,
+                                                                "Item agregado a la venta",
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
+                                                        }
+
+
+                                                    }
+
+
                                                 }
+                                                mDialogView.Cancelar.setOnClickListener {
+                                                    val inputManager: InputMethodManager =
+                                                        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                                    inputManager.hideSoftInputFromWindow(
+                                                        mDialogView.windowToken,
+                                                        0
+                                                    )
+                                                    mAlertDialog.dismiss()
+                                                    finish()
+                                                    startActivity(getIntent())
+
+                                                }
+
                                             }
                                         }
-                                        mDialogView.Cancelar.setOnClickListener{
-                                            val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                                            inputManager.hideSoftInputFromWindow(mDialogView.windowToken,0)
-                                            mAlertDialog.dismiss()
-
-                                        }
-
-                                    }
 
 
 
 
 
-                                })
+                                    })
+                                }
+
+
                             }
 
+                        mRecyclerView.adapter = firebaseRecyclerAdapter
+                        firebaseRecyclerAdapter.startListening()
 
-                        }
+                        mSearchBar?.enableSearch()
 
-                    mRecyclerView.adapter = firebaseRecyclerAdapter
-                    firebaseRecyclerAdapter.startListening()
+                        Toast.makeText(this, "Escaneo Terminado!", Toast.LENGTH_LONG).show()
 
-                    mSearchBar?.enableSearch()
-                    Toast.makeText(this, "Escaneo Terminado!", Toast.LENGTH_LONG).show()
 
+                    }
+                    else{
+                        Toast.makeText(this, "Vuelva a Escanear!", Toast.LENGTH_LONG).show()
+                    }
 
 
                 }
