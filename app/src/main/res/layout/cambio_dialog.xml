@@ -30,6 +30,7 @@ android:padding="10dp">
                 android:gravity="center"
                 android:paddingLeft="50dp"
                 android:text="Pago:"
+                android:textColor="@android:color/black"
 
                 />
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -40,7 +41,7 @@ android:padding="10dp">
                 android:inputType="number"
                 android:gravity="right"
                 android:hint="1000"
-
+                android:textColor="@android:color/black"
                 />
 
     </RelativeLayout>
@@ -61,6 +62,7 @@ android:padding="10dp">
                 android:gravity="left"
                 android:text="Total:"
                 android:paddingLeft="50dp"
+                android:textColor="@android:color/holo_green_dark"
 
                 />
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -71,6 +73,7 @@ android:padding="10dp">
                 android:inputType="number"
                 android:gravity="right"
                 android:hint="1000"
+                android:textColor="@android:color/holo_green_dark"
 
                 />
 
@@ -91,6 +94,7 @@ android:padding="10dp">
                 android:inputType="number"
                 android:gravity="center"
                 android:text="Cambio:"
+                android:textColor="@android:color/holo_red_dark"
 
                 />
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -101,6 +105,7 @@ android:padding="10dp">
                 android:inputType="number"
                 android:gravity="right"
                 android:hint="1000"
+                android:textColor="@android:color/holo_red_dark"
 
                 />
 

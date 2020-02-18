@@ -1020,7 +1020,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     if(result.length>=0){
 
                         var codebar= result
-                        searchBar.text=codebar
+                        //searchBar.text=codebar
                         val option = FirebaseRecyclerOptions.Builder<Vista>()
                             .setQuery(database.getReference("Views").orderByChild("Codebar").equalTo(codebar.substring(0,codebar.length-1)),Vista::class.java)
                             .build()

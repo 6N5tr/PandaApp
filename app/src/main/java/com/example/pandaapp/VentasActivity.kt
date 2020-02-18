@@ -160,14 +160,21 @@ class VentasActivity : AppCompatActivity() {
                     inputManager.hideSoftInputFromWindow(mDialogView1.windowToken,0)
                     mAlertDialog.dismiss()
                     var entrada=mDialogView1.inputcantidad.text.toString().replace(',', '.')
-                    var pago = entrada.substring(1,mDialogView1.inputcantidad.text.toString().length).toDouble()
-                    if(pago==0.00){
+                    Toast.makeText(applicationContext,"Entrada: ${entrada}!",Toast.LENGTH_SHORT).show()
+                    var pago=0.00
+                    if (entrada==""){
+                        pago=0.00
+                    }
+                    else{
+                        pago = entrada.substring(1,mDialogView1.inputcantidad.text.toString().length).toDouble()
+                    }
+
+                    /*if(pago==0.00){
                         pago = 0.00
                     }
                     else {
-                        Toast.makeText(applicationContext,"Pago: ${pago}!",Toast.LENGTH_SHORT).show()
-                        pago = entrada.substring(1,mDialogView1.inputcantidad.text.toString().length).toDouble()
-                    }
+                       pago = entrada.substring(2,mDialogView1.inputcantidad.text.toString().length).toDouble()
+                    }*/
                     val mDialogView=LayoutInflater.from(this@VentasActivity).inflate(R.layout.cambio_dialog,null)
                     val mBuilder=AlertDialog.Builder(this@VentasActivity)
                         .setView(mDialogView)
@@ -235,7 +242,7 @@ class VentasActivity : AppCompatActivity() {
                         finish()
 
                         Toast.makeText(applicationContext,"Venta Realizada!",Toast.LENGTH_SHORT).show()
-
+                        mAlertDialog.dismiss()
                     }
 
 
