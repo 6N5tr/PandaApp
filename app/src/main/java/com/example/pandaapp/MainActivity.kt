@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    var p="Panda/"
+    var p=""
     var database = FirebaseDatabase.getInstance()
     var ref = database.getReference(p+"User")
     var position =0

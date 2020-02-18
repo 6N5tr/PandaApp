@@ -54,7 +54,7 @@ import kotlinx.android.synthetic.main.loginingresos_dialog.view.*
 import java.util.*
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    var p="Panda/"
+    var p=""
     var database = FirebaseDatabase.getInstance()
     var ref = database.getReference(p+"Views")
 
@@ -870,7 +870,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 val inputManager:InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
-                mDialogView.inputcantidad.requestFocus()
+                mDialogView.usuario.requestFocus()
 
 //5
                 mDialogView.Aceptar.setOnClickListener{

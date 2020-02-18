@@ -40,7 +40,7 @@ import kotlinx.android.synthetic.main.cantidadmuestra_dialog.view.*
 import kotlinx.android.synthetic.main.content_home.*
 
 class IngresosActivity : AppCompatActivity() {
-    var p="Panda/"
+    var p=""
     var database = FirebaseDatabase.getInstance()
     var ref = database.getReference(p+"Views")
 
