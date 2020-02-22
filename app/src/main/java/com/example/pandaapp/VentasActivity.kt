@@ -166,7 +166,7 @@ class VentasActivity : AppCompatActivity() {
                         pago=0.00
                     }
                     else{
-                        pago = entrada.substring(1,mDialogView1.inputcantidad.text.toString().length).toDouble()
+                        pago = entrada.substring(1,mDialogView1.inputcantidad.text.toString().length).replace("\\s".toRegex(), "").toDouble()
                     }
 
                     /*if(pago==0.00){
