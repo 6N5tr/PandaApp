@@ -45,7 +45,7 @@ import java.math.BigDecimal
 class VentasActivity : AppCompatActivity() {
 
 
-    var p=""
+    var p="Panda/"
     var database = FirebaseDatabase.getInstance()
     var ref = database.getReference(p+"Views")
 

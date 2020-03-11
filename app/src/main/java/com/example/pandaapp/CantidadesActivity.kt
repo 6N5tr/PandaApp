@@ -14,7 +14,7 @@ class CantidadesActivity : AppCompatActivity() {
     lateinit var mTotal:TextView
     lateinit var mTexto:TextView
 
-    var p=""
+    var p="Panda/"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cantidades)

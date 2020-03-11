@@ -54,7 +54,7 @@ import kotlinx.android.synthetic.main.loginingresos_dialog.view.*
 import java.util.*
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    var p=""
+    var p="Panda/"
     var database = FirebaseDatabase.getInstance()
     var ref = database.getReference(p+"Views")
 
@@ -116,7 +116,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                     val option = FirebaseRecyclerOptions.Builder<Vista>()
                         .setQuery(
-                            database.getReference("Views").orderByChild("Name").startAt(searchBar.text.first().toString().toUpperCase()+searchBar.text.toString().substring(1,searchBar.text.length))
+                            database.getReference(p+"Views").orderByChild("Name").startAt(searchBar.text.first().toString().toUpperCase()+searchBar.text.toString().substring(1,searchBar.text.length))
                                 .endAt(searchBar.text.substring(1,searchBar.text.length)+"\uf8ff"),Vista::class.java
                         )
                         .build()
